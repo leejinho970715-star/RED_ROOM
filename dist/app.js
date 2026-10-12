@@ -1,6 +1,7 @@
 import {SLOTS,FILTERS,RARITIES,CATALOG,COST,REWARDS,initialState,newRound,randomSeed,sha256,gachaResult,lotteryNumbers,nameFor,canEquip,ticketOf,validTicket,matches,sellPart,matchProbability,verifyGacha,verifyLottery} from './game.js';
 import {partArt,characterArt} from './art.js';
 import {createScenes} from './scene.js';
+import {createRedButton} from './red-button.js';
 const $=s=>document.querySelector(s);
 const icon=id=>`<svg aria-hidden="true"><use href="#i-${id}"/></svg>`;
 const eth=n=>(n/1e6).toFixed(4);
@@ -63,13 +64,13 @@ async function finishPending(){
 }
 async function draw(){
  if(busy)return;if(state.balance<COST){toast('플레이 잔액이 부족합니다. 데모 ETH를 충전하거나 파츠를 판매하세요.');showDeposit();return;}
- busy=true;$('#draw-button').disabled=true;$('#draw-button').innerHTML=`<span class="button-led loading-dot"></span><span>파츠 추출 중…<small>ASSEMBLING YOUR DESTINY</small></span>`;$('#machine-scene').classList.add('spin-active');
+ busy=true;$('#draw-button').disabled=true;$('#draw-button').classList.add('extracting');$('#draw-label').textContent='파츠 추출 중…';$('#draw-status').textContent='EXTRACTING YOUR PART';$('#machine-scene').classList.add('spin-active');
  try{
   const {seed,commit}=state.nextGacha,id=crypto.randomUUID();
   state.pending={seed,commit,id,time:Date.now()};state.balance-=COST;persist();$('#balance').textContent=eth(state.balance);scenes?.spin();playSound();
   await new Promise(resolve=>setTimeout(resolve,1400));const part=await finishPending();showDrop(part);playSound('drop');
  }catch{toast('추출을 마무리하지 못했습니다. 새로고침하면 저장된 추출을 복구합니다.');}
- finally{busy=false;$('#draw-button').disabled=false;$('#draw-button').innerHTML=`<span class="button-led"></span><span>레드버튼 누르기<small>1 DRAW · 0.001 DEMO ETH</small></span>${icon('arrow')}`;$('#machine-scene').classList.remove('spin-active');render();}
+ finally{busy=false;$('#draw-button').disabled=false;$('#draw-button').classList.remove('extracting');$('#draw-label').textContent='레드버튼 누르기';$('#draw-status').textContent='PRESS TO EXTRACT';$('#machine-scene').classList.remove('spin-active');render();}
 }
 function showSale(id){
  const part=state.inventory.find(p=>p.id===id);if(!part)return;const rarity=RARITIES[part.rarity];
@@ -141,6 +142,7 @@ $('#draw-button').addEventListener('click',draw);$('#submit-ticket').addEventLis
 $('.brand').addEventListener('click',e=>{e.preventDefault();navigate('arcade');});
 render();
 await document.fonts.ready;
+createRedButton();
 try{scenes=createScenes(draw);}catch(error){console.error('3D scene unavailable',error);toast('이 브라우저에서는 3D 표시를 준비하지 못했습니다. 게임 버튼은 계속 사용할 수 있습니다.');}
 if(state.pending){await finishPending();toast('저장된 추출을 복구했습니다. 파츠가 수집함에 추가되었습니다.');}
 function updateClock(){const seconds=Math.max(0,Math.floor((state.round.expires-Date.now())/1000));const hours=Math.floor(seconds/3600),minutes=Math.floor(seconds%3600/60),secs=seconds%60;$('#countdown').innerHTML=`${pad(hours)}<span>:</span>${pad(minutes)}<span>:</span>${pad(secs)}`;}

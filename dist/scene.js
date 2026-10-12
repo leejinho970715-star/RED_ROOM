@@ -28,7 +28,7 @@ export function createScenes(onMachineClick){
  cube(machine,-.83,3.91,1.15,.035,.46,.02,'#8bb4b6',{emissive:'#4f727c',emissiveIntensity:.45});cube(machine,-.68,3.87,1.15,.035,.37,.02,'#5d7e89');cube(machine,.88,2.52,1.15,.025,.46,.02,'#5d7e89');
  label(machine,'56 PARTS / 7 TIERS',0,1.87,1.06,2.2,.25,'#d59c81','#51272a',11);
  const consolePanel=cube(machine,0,1.25,1.1,2.72,.65,.9,'#6d2b2e');cube(machine,0,1.6,1.18,2.6,.13,.94,'#38434a');
- const buttonBase=cylinder(machine,0,1.76,1.23,.47,.13,'#171d26',16);cylinder(machine,0,1.83,1.23,.39,.13,'#54201e',16);const redButton=cylinder(machine,0,1.94,1.23,.34,.14,'#ff4330',16);redButton.material=mat('#ff4a36',{emissive:'#fa3022',emissiveIntensity:1.1});
+ const buttonBase=cylinder(machine,0,1.76,1.23,.47,.13,'#171d26',64);cylinder(machine,0,1.83,1.23,.39,.13,'#54201e',64);const redButton=cylinder(machine,0,1.94,1.23,.34,.14,'#ff1533',64);redButton.material=mat('#ff1533',{roughness:.3,metalness:.2,emissive:'#ff092b',emissiveIntensity:1.3});
  cube(machine,-.92,1.72,1.18,.25,.04,.35,'#252c34');cube(machine,-.92,1.75,1.2,.16,.035,.22,'#70ad99',{emissive:'#62c292',emissiveIntensity:.45});
  cube(machine,.97,1.72,1.21,.23,.035,.35,'#242c35');cube(machine,.97,1.76,1.19,.025,.03,.25,'#987d62');
  cube(machine,0,.73,.95,1.05,.45,.08,'#161b24');cube(machine,0,.52,1.03,1.13,.1,.22,'#363c45');label(machine,'PUSH TO SURVIVE',0,.32,.97,2.1,.19,'#9a6559','#63272b',10);
