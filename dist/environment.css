@@ -1,0 +1,9 @@
+/* Generated pixel-art environment; opaque text surfaces preserve legibility. */
+body{background:#0c0e12 url('./assets/dystopian-basement.png') center center/cover fixed no-repeat}
+.app-shell{min-height:100vh;background:linear-gradient(180deg,#080b1270,#080b1240 60%,#080b1270)}
+.sidebar{background:#101217eb}.topbar{background:#0f1116e8}.page-intro{text-shadow:0 2px 9px #000}
+.stat-strip,.panel{background:#10141de8}.panel-heading,.machine-controls{background:#12151bed}
+.machine-scene{background:linear-gradient(180deg,#0a0c1110,#080a1226),url('./assets/dystopian-basement.png') center 58%/cover no-repeat}
+.character-stage{background:radial-gradient(ellipse at 50% 60%,#25313b50,#080c13b8),url('./assets/dystopian-basement.png') center 55%/cover no-repeat}
+.page-footer{color:#abb0bc;text-shadow:0 1px 5px #000}
+@media(max-width:760px){body{background-attachment:scroll;background-position:center top}.app-shell{background:#080b1250}}
