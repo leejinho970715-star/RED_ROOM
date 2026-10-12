@@ -36,6 +36,17 @@ export async function lotteryNumbers(seed){
 export function rarityForRoll(roll){if(!Number.isInteger(roll)||roll<0||roll>=10000)throw new RangeError('Rarity roll out of range');let total=0;for(let i=0;i<RARITIES.length;i++){total+=RARITIES[i].weight;if(roll<total)return i;}throw new RangeError('Rarity roll out of range');}
 export function nameFor(part){return `${RARITIES[part.rarity].prefix} ${BASE_NAMES[part.slot]}`;}
 export function sellPart(state,id){const index=state.inventory.findIndex(p=>p.id===id);if(index<0)return null;const part=state.inventory[index];const value=RARITIES[part.rarity].sale;state.inventory.splice(index,1);state.equipped=state.equipped.map(p=>p===id?null:p);state.balance+=value;return {part,value};}
+export function sellParts(state,ids){
+ if(!Array.isArray(ids)||!ids.length)return null;
+ const unique=new Set(ids),parts=state.inventory.filter(p=>unique.has(p.id));
+ // Validate the entire snapshot before changing ownership or balance.
+ if(parts.length!==unique.size)return null;
+ const value=parts.reduce((sum,p)=>sum+RARITIES[p.rarity].sale,0);
+ if(!Number.isSafeInteger(state.balance+value))return null;
+ state.inventory=state.inventory.filter(p=>!unique.has(p.id));
+ state.equipped=state.equipped.map(id=>unique.has(id)?null:id);state.balance+=value;
+ return {parts,value};
+}
 export function canEquip(state,part){return !state.equipped.some((id,slot)=>slot!==part.slot&&state.inventory.find(p=>p.id===id)?.number===part.number);}
 export function ticketOf(state){return state.equipped.map(id=>state.inventory.find(p=>p.id===id)?.number??null);}
 export function validTicket(ticket){return ticket.length===8&&ticket.every(n=>Number.isInteger(n)&&n>=1&&n<=50)&&new Set(ticket).size===8;}

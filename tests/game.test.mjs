@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {CATALOG,RARITIES,rarityForRoll,initialState,sellPart,ticketOf,canEquip,validTicket,gachaResult,lotteryNumbers,sha256,verifyGacha,verifyLottery,combination,matchProbability,COST} from '../dist/game.js';
+import {CATALOG,RARITIES,rarityForRoll,initialState,sellPart,sellParts,ticketOf,canEquip,validTicket,gachaResult,lotteryNumbers,sha256,verifyGacha,verifyLottery,combination,matchProbability,COST} from '../dist/game.js';
 test('exactly 56 archetypes, eight distinct slots in each of seven ordered rarities',()=>{
  assert.equal(CATALOG.length,56);assert.equal(new Set(CATALOG.map(p=>p.typeId)).size,56);
  assert.deepEqual(RARITIES.map(r=>r.label),['커먼','매직','레어','유니크','레전더리','에픽','신화']);
@@ -20,6 +20,22 @@ test('ticket requires eight different numbers and slot replacement rejects dupli
  const state=await initialState();assert.equal(validTicket(ticketOf(state)),false);state.equipped=state.inventory.map(p=>p.id);assert.equal(validTicket(ticketOf(state)),true);
  assert.equal(canEquip(state,{slot:2,number:state.inventory[0].number}),false);assert.equal(canEquip(state,{slot:0,number:state.inventory[0].number}),true);
  assert.equal(validTicket([1,2,3,4,5,6,7,7]),false);assert.equal(validTicket([0,2,3,4,5,6,7,8]),false);
+});
+test('bulk sale deduplicates IDs, clears only sold equipment, credits once and preserves a registered ticket',async()=>{
+ const state=await initialState(),before=state.balance,parts=[state.inventory[0],state.inventory[5]],ids=parts.map(p=>p.id);
+ state.round.ticket=[7,23,12,38,45,19,31,4];const ticket=[...state.round.ticket];
+ const result=sellParts(state,[...ids,ids[0]]);assert.equal(result.parts.length,2);
+ assert.equal(result.value,parts.reduce((sum,p)=>sum+RARITIES[p.rarity].sale,0));assert.equal(state.balance,before+result.value);
+ assert.equal(state.inventory.length,6);assert.equal(state.equipped[0],null);assert.equal(state.equipped[1],'starter-1');assert.deepEqual(state.round.ticket,ticket);
+ assert.equal(sellParts(state,ids),null);assert.equal(state.balance,before+result.value);
+});
+test('stale bulk confirmation is atomic; selling all empties inventory and every equipment slot',async()=>{
+ const state=await initialState(),snapshot=structuredClone(state);
+ assert.equal(sellParts(state,[state.inventory[0].id,'missing-part']),null);assert.deepEqual(state,snapshot);
+ assert.equal(sellParts(state,[]),null);assert.deepEqual(state,snapshot);
+ const ids=state.inventory.map(p=>p.id),value=state.inventory.reduce((sum,p)=>sum+RARITIES[p.rarity].sale,0);
+ const result=sellParts(state,ids);assert.equal(result.value,value);assert.equal(state.balance,snapshot.balance+value);assert.equal(state.inventory.length,0);assert.deepEqual(state.equipped,Array(8).fill(null));
+ assert.equal(sellParts(state,ids),null);assert.equal(state.balance,snapshot.balance+value);
 });
 test('SHA-256 proofs reproduce gacha and reject altered number or seed',async()=>{
  const seed='a'.repeat(64),result=await gachaResult(seed),proof={seed,commit:await sha256(seed),...result};
