@@ -4,8 +4,15 @@
 
 ## 실행
 
+공개 데모: https://leejinho970715-star.github.io/RED_ROOM/
+
+GitHub 저장소: https://github.com/leejinho970715-star/RED_ROOM
+
+`.github/workflows/pages.yml`이 `main` 푸시 시 게임 규칙 테스트를 실행하고 `dist/`를 GitHub Pages에 배포합니다. 모든 파일은 상대 경로로 참조하여 `/RED_ROOM/` 하위 경로에서도 동작합니다. 실제 가상화폐 결제·출금·NFT 발행은 연결되지 않은 데모입니다.
+
 ```powershell
-cd red-room
+git clone https://github.com/leejinho970715-star/RED_ROOM.git
+cd RED_ROOM
 npm start
 ```
 
