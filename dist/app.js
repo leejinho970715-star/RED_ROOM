@@ -2,12 +2,14 @@ import {SLOTS,FILTERS,RARITIES,CATALOG,COST,REWARDS,initialState,newRound,random
 import {partArt,characterArt} from './art.js';
 import {createScenes} from './scene.js';
 import {createRedButton} from './red-button.js';
+import {createGameAudio} from './audio.js';
 const $=s=>document.querySelector(s);
 const icon=id=>`<svg aria-hidden="true"><use href="#i-${id}"/></svg>`;
 const eth=n=>(n/1e6).toFixed(4);
 const pad=n=>String(n).padStart(2,'0');
 const storageKey='red-room-v2';
-let state,view='arcade',filter='all',busy=false,sound=false,scenes,depositAmount=10000,toastTimer,flipped=false;
+const audio=createGameAudio();
+let state,view='arcade',filter='all',busy=false,scenes,depositAmount=10000,toastTimer,flipped=false;
 try{state=JSON.parse(localStorage.getItem(storageKey));if(!state||state.version!==1||!Array.isArray(state.inventory)||state.equipped?.length!==8||!state.round||!Number.isSafeInteger(state.balance)||state.balance<0)state=null;}catch{state=null;}
 if(!state)state=await initialState();
 if(!state.nextGacha){const seed=randomSeed();state.nextGacha={seed,commit:await sha256(seed)};}
@@ -39,12 +41,13 @@ function renderInventory(){
 }
 function navigate(next){
  view=next;$('#arcade-view').hidden=!['arcade','inventory'].includes(next);$('#arcade-view').classList.toggle('full-inventory',next==='inventory');$('#results-view').hidden=next!=='results';$('#fairness-view').hidden=next!=='fairness';
- const names={arcade:'가챠 아케이드',inventory:'나의 NFT 파츠',results:'로또 & 리워드',fairness:'공정성 검증'};$('#breadcrumb').textContent=names[next];document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.nav===next));render();window.scrollTo({top:0,behavior:'smooth'});
+ const names={arcade:'GACHA ARCADE',inventory:'MY NFT PARTS',results:'LOTTERY & REWARDS',fairness:'FAIRNESS CHECK'};$('#breadcrumb').textContent=names[next];document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.nav===next));render();window.scrollTo({top:0,behavior:'smooth'});
 }
 function equip(id,showToast=true){
  const part=state.inventory.find(p=>p.id===id);if(!part)return;
- if(!canEquip(state,part)){toast('같은 번호가 이미 장착되어 있습니다. 서로 다른 8개 번호를 조합하세요.');return;}
- state.equipped[part.slot]=id;render();if(showToast)toast(`${SLOTS[part.slot]}에 ${nameFor(part)} · ${pad(part.number)} 장착 완료`);
+ if(!canEquip(state,part)){audio.play('error');toast('같은 번호가 이미 장착되어 있습니다. 서로 다른 8개 번호를 조합하세요.');return;}
+ if(state.equipped[part.slot]===id)return;
+ state.equipped[part.slot]=id;audio.play('equip');render();if(showToast)toast(`${SLOTS[part.slot]}에 ${nameFor(part)} · ${pad(part.number)} 장착 완료`);
 }
 function chooseSlot(slot){
  const parts=state.inventory.filter(p=>p.slot===slot);
@@ -54,29 +57,26 @@ function showDrop(part){
  const rarity=RARITIES[part.rarity];
  modal(`<div class="modal-rarity" style="color:${rarity.color}">${rarity.name} / ${rarity.label} · ${rarity.chance}%</div><h2>${nameFor(part)}</h2><p>${SLOTS[part.slot]}의 새로운 조각을 발견했습니다.</p><div class="modal-art" style="background:radial-gradient(ellipse,${rarity.color}22,transparent 65%)">${partArt(part.slot,part.rarity)}</div><div class="drop-number"><span>YOUR LOTTERY NUMBER</span><strong class="modal-number">${pad(part.number)}</strong></div><button class="modal-primary" data-drop-equip="${part.id}">생존자에게 장착하기 ${icon('arrow')}</button><button class="modal-secondary" data-drop-sell="${part.id}">바로 판매 · ${eth(rarity.sale)} DEMO ETH</button><button class="modal-secondary" data-action="close">수집함에 보관하기</button><p class="modal-inline-note">판매하면 파츠가 사라지고 판매액이 플레이 잔액에 즉시 지급됩니다.</p>`,'NEW PART EXTRACTED');
 }
-function playSound(kind='draw'){
- if(!sound)return;try{const audio=new (window.AudioContext||window.webkitAudioContext)();const oscillator=audio.createOscillator(),gain=audio.createGain();oscillator.type='square';oscillator.frequency.setValueAtTime(kind==='draw'?150:540,audio.currentTime);oscillator.frequency.exponentialRampToValueAtTime(kind==='draw'?65:900,audio.currentTime+.18);gain.gain.setValueAtTime(.035,audio.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+.25);oscillator.connect(gain);gain.connect(audio.destination);oscillator.start();oscillator.stop(audio.currentTime+.25);oscillator.onended=()=>audio.close();}catch{}
-}
 async function finishPending(){
  const pending=state.pending;if(!pending)return;
  const result=await gachaResult(pending.seed),part={...result,id:`nft-${pending.id}`,typeId:`${result.rarity}-${result.slot}`};
  state.inventory.push(part);state.proofs.unshift({...pending,...result,kind:'gacha',partId:part.id});delete state.pending;const seed=randomSeed();state.nextGacha={seed,commit:await sha256(seed)};render();return part;
 }
 async function draw(){
- if(busy)return;if(state.balance<COST){toast('플레이 잔액이 부족합니다. 데모 ETH를 충전하거나 파츠를 판매하세요.');showDeposit();return;}
- busy=true;$('#draw-button').disabled=true;$('#draw-button').classList.add('extracting');$('#draw-label').textContent='파츠 추출 중…';$('#draw-status').textContent='EXTRACTING YOUR PART';$('#machine-scene').classList.add('spin-active');
+ if(busy)return;audio.unlock();audio.play('press');if(state.balance<COST){audio.play('error');toast('플레이 잔액이 부족합니다. 데모 ETH를 충전하거나 파츠를 판매하세요.');showDeposit();return;}
+ busy=true;$('#draw-button').disabled=true;$('#draw-button').classList.add('extracting');$('#draw-label').textContent='EXTRACTING';$('#draw-status').textContent='EXTRACTING YOUR PART';$('#machine-scene').classList.add('spin-active');
  try{
   const {seed,commit}=state.nextGacha,id=crypto.randomUUID();
-  state.pending={seed,commit,id,time:Date.now()};state.balance-=COST;persist();$('#balance').textContent=eth(state.balance);scenes?.spin();playSound();
-  await new Promise(resolve=>setTimeout(resolve,1400));const part=await finishPending();showDrop(part);playSound('drop');
+  state.pending={seed,commit,id,time:Date.now()};state.balance-=COST;persist();$('#balance').textContent=eth(state.balance);scenes?.spin();audio.play('spin');
+  await new Promise(resolve=>setTimeout(resolve,1400));const part=await finishPending();showDrop(part);audio.play('drop',part.rarity);
  }catch{toast('추출을 마무리하지 못했습니다. 새로고침하면 저장된 추출을 복구합니다.');}
- finally{busy=false;$('#draw-button').disabled=false;$('#draw-button').classList.remove('extracting');$('#draw-label').textContent='레드버튼 누르기';$('#draw-status').textContent='PRESS TO EXTRACT';$('#machine-scene').classList.remove('spin-active');render();}
+ finally{busy=false;$('#draw-button').disabled=false;$('#draw-button').classList.remove('extracting');$('#draw-label').textContent='EXTRACT';$('#draw-status').textContent='PRESS TO EXTRACT';$('#machine-scene').classList.remove('spin-active');render();}
 }
 function showSale(id){
  const part=state.inventory.find(p=>p.id===id);if(!part)return;const rarity=RARITIES[part.rarity];
  modal(`<h2>파츠를 다음 기회로.</h2><p>${nameFor(part)} · 번호 ${pad(part.number)}<br>판매한 파츠는 수집함에서 제거됩니다.${state.equipped.includes(id)?'<br>현재 장착 중인 파츠이므로 장착도 해제됩니다.':''}</p><div class="sale-summary"><span>판매 후 받을 금액</span><strong>${eth(rarity.sale)} <small>DEMO ETH</small></strong><span>판매 후 잔액: ${eth(state.balance+rarity.sale)} ETH</span></div><button class="modal-primary" data-confirm-sell="${id}">판매하고 잔액 받기</button><button class="modal-secondary" data-action="close">계속 보관하기</button>`,'RECYCLE. RECHARGE. REPLAY.');
 }
-function executeSale(id){const result=sellPart(state,id);if(!result){toast('이미 판매되었거나 보유하지 않은 파츠입니다.');closeModal();return;}render();closeModal();toast(`${nameFor(result.part)} 판매 완료 · +${eth(result.value)} DEMO ETH`);}
+function executeSale(id){const result=sellPart(state,id);if(!result){audio.play('error');toast('이미 판매되었거나 보유하지 않은 파츠입니다.');closeModal();return;}audio.play('sell');render();closeModal();toast(`${nameFor(result.part)} 판매 완료 · +${eth(result.value)} DEMO ETH`);}
 function showDeposit(){depositAmount=10000;modal(`<h2>붉은 불빛을 이어가세요.</h2><p>데모 ETH를 충전하고 새로운 파츠를 추출하세요.</p><div class="demo-banner">DEMO NETWORK · 실제 가상화폐 결제 없음</div><div class="deposit-amounts">${[10000,50000,100000].map(n=>`<button data-amount="${n}" class="${n===depositAmount?'active':''}">${eth(n)}<br><small>ETH</small></button>`).join('')}</div><div class="deposit-detail"><span>현재 잔액</span><strong>${eth(state.balance)} DEMO ETH</strong></div><button class="modal-primary" id="confirm-deposit">0.0100 DEMO ETH 충전</button><p class="modal-inline-note">데모 잔액은 이 브라우저에 저장됩니다. 실제 입금·출금·스마트 계약은 연결되지 않았습니다.</p>`,'KEEP THE RED LIGHT ON');}
 function showWallet(){
  modal(`<h2>당신의 생존자 ID.</h2><p>브라우저 지갑의 주소를 연결할 수 있습니다. 데모 플레이에는 지갑이 필요하지 않습니다.</p><button class="modal-primary" data-action="connect-wallet">${icon('wallet')} 브라우저 지갑 연결</button><button class="modal-secondary" data-action="close">지갑 없이 데모 계속하기</button><div class="demo-banner">주소 연결만 요청합니다. 서명과 송금은 요청하지 않습니다.</div><p class="modal-inline-note">실제 자산 잔액과 게임의 DEMO ETH 잔액은 별개입니다.</p>`,'YOUR WALLET. YOUR IDENTITY.');
@@ -85,7 +85,7 @@ async function connectWallet(){
  if(!window.ethereum?.request){toast('연결된 브라우저 지갑이 없습니다. 지갑 없이 데모를 즐길 수 있습니다.');return;}
  try{const accounts=await window.ethereum.request({method:'eth_requestAccounts'});const account=accounts[0];if(!account){toast('지갑에서 연결할 계정을 선택하세요.');return;}$('#wallet-label').textContent=`${account.slice(0,6)}…${account.slice(-4)}`;closeModal();toast('지갑 주소를 연결했습니다. 게임 잔액은 DEMO ETH입니다.');}catch(error){toast(error.code===4001?'지갑 연결 요청을 취소했습니다.':'지갑 연결을 완료하지 못했습니다.');}
 }
-window.ethereum?.on?.('accountsChanged',accounts=>{$('#wallet-label').textContent=accounts[0]?`${accounts[0].slice(0,6)}…${accounts[0].slice(-4)}`:'지갑 연결';});
+window.ethereum?.on?.('accountsChanged',accounts=>{$('#wallet-label').textContent=accounts[0]?`${accounts[0].slice(0,6)}…${accounts[0].slice(-4)}`:'CONNECT WALLET';});
 function showOdds(){
  modal(`<h2>모든 확률, 숨김없이.</h2><p>번호는 등급과 무관하게 1–50 각각 2%.<br>각 부위는 12.5%. 등급 내 8개 파츠의 확률은 동일합니다.</p><table class="odds-table"><thead><tr><th>등급</th><th>등급 확률</th><th>1종의 확률</th><th>판매 ETH</th></tr></thead><tbody>${[...RARITIES].reverse().map(r=>`<tr><td style="color:${r.color}">${r.label}</td><td>${r.chance}%</td><td>${(r.chance/8).toFixed(r.chance<1?5:3)}%</td><td>${eth(r.sale)}</td></tr>`).join('')}</tbody></table><p class="modal-inline-note">7개 등급 × 8개 부위 = 56종 · 확률 합계 100%<br>신화 1/10,000 · 에픽 9/10,000. 매 추첨은 독립적이며 천장 시스템은 없습니다.</p><button class="modal-primary" data-action="open-fairness">추첨 기록과 검증 방식 보기 ${icon('arrow')}</button>`,'TRANSPARENT DROP RATES');
 }
@@ -102,7 +102,7 @@ async function submitTicket(){
  const snapshot=[...ticket];modal(`<h2>운명의 조합이 완성됐습니다.</h2><p>이 라운드에는 아래 번호로 한 번 참여합니다.<br>추가 참여 비용은 없습니다. 이미 추출한 파츠도 유지됩니다.</p><div class="result-numbers">${snapshot.map(n=>`<span>${pad(n)}</span>`).join('')}</div><p class="modal-inline-note">추첨 전 시드 커밋: <code style="overflow-wrap:anywhere">${state.round.commit}</code></p><button class="modal-primary" id="confirm-ticket">조합 등록하고 결과 확인하기</button><button class="modal-secondary" data-action="close">조합 더 수정하기</button>`,'LOCK IN YOUR DESTINY');
  $('#confirm-ticket').addEventListener('click',async()=>{
   if(busy||state.round.ticket)return;busy=true;$('#confirm-ticket').disabled=true;
-  try{const numbers=await lotteryNumbers(state.round.seed);state.round.ticket=snapshot;state.round.result={numbers,matches:matches(snapshot,numbers),claimed:false};state.history.unshift({round:state.round.id,ticket:snapshot,numbers,seed:state.round.seed,commit:state.round.commit});persist();closeModal();navigate('results');playSound('drop');}catch{toast('결과를 준비하지 못했습니다. 다시 시도하세요.');}finally{busy=false;render();}
+  try{const numbers=await lotteryNumbers(state.round.seed);state.round.ticket=snapshot;state.round.result={numbers,matches:matches(snapshot,numbers),claimed:false};state.history.unshift({round:state.round.id,ticket:snapshot,numbers,seed:state.round.seed,commit:state.round.commit});persist();closeModal();navigate('results');audio.play('drop');}catch{audio.play('error');toast('결과를 준비하지 못했습니다. 다시 시도하세요.');}finally{busy=false;render();}
  },{once:true});
 }
 function renderResults(){
@@ -119,24 +119,24 @@ function renderFairness(){
 function exportProofs(){const {seed,...round}=state.round;const payload={notice:'Browser-local demo. Not on-chain or independently guaranteed. Algorithm: SHA-256 rejection sampling.',rarities:RARITIES,proofs:state.proofs,nextGachaCommit:state.nextGacha.commit,history:state.history,round:{...round,...(round.result?{seed}:{})}};const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='red-room-proofs.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),500);}
 document.addEventListener('click',async e=>{
  const b=e.target.closest('button');if(!b||b.disabled)return;
- if(b.dataset.nav){navigate(b.dataset.nav);return;}
- if(b.dataset.filter){filter=b.dataset.filter;renderInventory();return;}
+ if(b.dataset.nav){audio.play('ui');navigate(b.dataset.nav);return;}
+ if(b.dataset.filter){audio.play('ui');filter=b.dataset.filter;renderInventory();return;}
  if(b.dataset.equip){equip(b.dataset.equip);return;}
  if(b.dataset.sell){showSale(b.dataset.sell);return;}
  if(b.dataset.chooseSlot!==undefined){chooseSlot(Number(b.dataset.chooseSlot));return;}
  if(b.dataset.pick){equip(b.dataset.pick);closeModal();return;}
- if(b.dataset.unequip!==undefined){state.equipped[Number(b.dataset.unequip)]=null;render();closeModal();return;}
+ if(b.dataset.unequip!==undefined){state.equipped[Number(b.dataset.unequip)]=null;audio.play('unequip');render();closeModal();return;}
  if(b.dataset.dropEquip){equip(b.dataset.dropEquip);closeModal();return;}
  if(b.dataset.dropSell){executeSale(b.dataset.dropSell);return;}
  if(b.dataset.confirmSell){executeSale(b.dataset.confirmSell);return;}
  if(b.dataset.amount){depositAmount=Number(b.dataset.amount);document.querySelectorAll('[data-amount]').forEach(b=>b.classList.toggle('active',Number(b.dataset.amount)===depositAmount));$('#confirm-deposit').textContent=`${eth(depositAmount)} DEMO ETH 충전`;return;}
- if(b.id==='confirm-deposit'){state.balance+=depositAmount;render();closeModal();toast(`${eth(depositAmount)} DEMO ETH 충전 완료`);return;}
+ if(b.id==='confirm-deposit'){state.balance+=depositAmount;audio.play('deposit');render();closeModal();toast(`${eth(depositAmount)} DEMO ETH 충전 완료`);return;}
  if(b.dataset.catalogTier!==undefined){renderCatalog(Number(b.dataset.catalogTier));return;}
- if(b.id==='claim-reward'){if(state.round.result&&!state.round.result.claimed){state.round.result.claimed=true;state.balance+=REWARDS[state.round.result.matches];render();toast('데모 리워드가 플레이 잔액으로 지급되었습니다.');}return;}
+ if(b.id==='claim-reward'){if(state.round.result&&!state.round.result.claimed){state.round.result.claimed=true;state.balance+=REWARDS[state.round.result.matches];audio.play('reward');render();toast('데모 리워드가 플레이 잔액으로 지급되었습니다.');}return;}
  if(b.id==='next-round'){if(state.round.result&&REWARDS[state.round.result.matches]&&!state.round.result.claimed){toast('이번 라운드의 데모 리워드를 먼저 받아주세요.');return;}b.disabled=true;state.round=await newRound(state.round.id+1);navigate('arcade');toast('새 라운드의 시드 해시를 공개했습니다.');return;}
  if(b.id==='verify-round'){b.textContent=await verifyLottery({seed:state.round.seed,commit:state.round.commit,numbers:state.round.result.numbers})?'✓ 시드 해시와 8개 당첨 번호가 일치합니다.':'검증 실패: 기록이 일치하지 않습니다.';return;}
  if(b.dataset.verify){const proof=state.proofs.find(p=>p.id===b.dataset.verify);b.textContent=await verifyGacha(proof)?'✓ 해시 · 부위 · 번호 · 등급 모두 일치':'검증 실패: 기록이 일치하지 않습니다.';return;}
- const actions={wallet:showWallet,deposit:showDeposit,odds:showOdds,catalog:showCatalog,help:showGuide,story:showStory,close:closeModal,'connect-wallet':connectWallet,'open-fairness':()=>{closeModal();navigate('fairness');},rotate:()=>{flipped=!flipped;$('#character-illustration').innerHTML=characterArt(equippedParts(),flipped);},sound:()=>{sound=!sound;b.setAttribute('aria-pressed',sound);b.setAttribute('aria-label',sound?'효과음 끄기':'효과음 켜기');b.querySelector('span').textContent=sound?'ON':'OFF';playSound('drop');}};actions[b.dataset.action]?.();
+ const actions={wallet:showWallet,deposit:showDeposit,odds:showOdds,catalog:showCatalog,help:showGuide,story:showStory,close:closeModal,'connect-wallet':connectWallet,'open-fairness':()=>{closeModal();navigate('fairness');},rotate:()=>{flipped=!flipped;$('#character-illustration').innerHTML=characterArt(equippedParts(),flipped);}};if(actions[b.dataset.action]){audio.play('ui');actions[b.dataset.action]();}
 });
 $('#draw-button').addEventListener('click',draw);$('#submit-ticket').addEventListener('click',submitTicket);$('#export-proofs').addEventListener('click',exportProofs);
 $('.brand').addEventListener('click',e=>{e.preventDefault();navigate('arcade');});

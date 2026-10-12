@@ -5,7 +5,8 @@
 .draw-button:after{content:'';position:absolute;inset:15%;border:1px solid #ff354155;border-radius:50%;box-shadow:0 0 19px #ff152566,0 0 48px #ff15252b;z-index:-1;pointer-events:none}
 #red-button-canvas{display:block;width:100%;height:100%;position:absolute;inset:0;pointer-events:none;image-rendering:auto;border-radius:50%}
 .red-button-lettering{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;pointer-events:none;padding-top:6px;text-shadow:0 2px 3px #5c000caa;transition:transform .12s}
-.red-button-lettering strong{font:23px var(--pixel);letter-spacing:2px;color:#fff1ea}.red-button-lettering>span{font:9px var(--body);color:#ffe6e8}
+.red-button-lettering strong{font:23px var(--pixel);letter-spacing:2px;color:#fff1ea}.red-button-lettering>span{font:8px var(--pixel);letter-spacing:1px;color:#ffe6e8}
+.controls-copy h3{font-family:var(--pixel);font-size:10px;line-height:1.8}.controls-copy p{font-family:var(--pixel);font-size:6px;line-height:1.8}
 .draw-cost{font:7px var(--pixel);color:#e1a2a6;white-space:nowrap}.draw-status{font:6px var(--pixel);color:#a9757a;min-height:9px;letter-spacing:.4px}
 .draw-button:hover:before{filter:blur(17px);background:radial-gradient(circle,#ff304a88,#ff152542 47%,#ff152500 72%)}
 .draw-button:active .red-button-lettering,.draw-button.extracting .red-button-lettering{transform:translateY(5px)}

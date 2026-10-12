@@ -12,6 +12,8 @@ GitHub 저장소: https://github.com/leejinho970715-star/RED_ROOM
 
 파비콘은 빨간 바탕의 픽셀 R 마크로 SVG, 32px PNG, ICO, 180px Apple 터치 아이콘을 제공합니다. `scripts/generate-brand-icons.ps1`로 동일한 아이콘을 재생성할 수 있습니다. Open Graph / X 공유 이미지는 `dist/assets/og-red-room-v1.png`(1734×907)이며, 내장 이미지 생성 도구로 제작한 프롬프트는 `dist/assets/OG-IMAGE-PROMPT.txt`에 보관합니다.
 
+게임 오디오는 최초 클릭/Enter/Space 입력부터 시작됩니다. 오리지널 BGM **BASEMENT SIGNAL**(D minor, 96 BPM, 40초 스테레오 루프)은 `scripts/generate-bgm.mjs`로 합성하며 외부 음원/샘플을 사용하지 않습니다. 하나의 Web Audio 컨텍스트가 버튼 누르기, 추출, 등급별 공개, 장착/해제, 판매, 충전, 리워드 효과음을 재생합니다. `BGM ON/OFF`, `SFX ON/OFF`, 음량을 각각 조절할 수 있으며 설정은 브라우저에 저장됩니다. 숨겨진 탭에서는 음악과 효과음을 일시 정지합니다. 상단 경로와 레드버튼의 기본/추출 상태 문구는 영문입니다. 버튼은 독립 Three.js 캔버스에서 금속 하우징, 둥근 캡, 조명과 누르는 깊이를 렌더링합니다.
+
 ```powershell
 git clone https://github.com/leejinho970715-star/RED_ROOM.git
 cd RED_ROOM
