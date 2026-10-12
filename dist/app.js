@@ -1,12 +1,12 @@
 import {SLOTS,FILTERS,RARITIES,CATALOG,COST,REWARDS,initialState,newRound,randomSeed,sha256,gachaResult,lotteryNumbers,nameFor,canEquip,ticketOf,validTicket,matches,sellPart,matchProbability,verifyGacha,verifyLottery} from './game.js';
-import {partArt} from './art.js';
+import {partArt,characterArt} from './art.js';
 import {createScenes} from './scene.js';
 const $=s=>document.querySelector(s);
 const icon=id=>`<svg aria-hidden="true"><use href="#i-${id}"/></svg>`;
 const eth=n=>(n/1e6).toFixed(4);
 const pad=n=>String(n).padStart(2,'0');
 const storageKey='red-room-v2';
-let state,view='arcade',filter='all',busy=false,sound=false,scenes,depositAmount=10000,toastTimer;
+let state,view='arcade',filter='all',busy=false,sound=false,scenes,depositAmount=10000,toastTimer,flipped=false;
 try{state=JSON.parse(localStorage.getItem(storageKey));if(!state||state.version!==1||!Array.isArray(state.inventory)||state.equipped?.length!==8||!state.round||!Number.isSafeInteger(state.balance)||state.balance<0)state=null;}catch{state=null;}
 if(!state)state=await initialState();
 if(!state.nextGacha){const seed=randomSeed();state.nextGacha={seed,commit:await sha256(seed)};}
@@ -24,7 +24,7 @@ function render(){
  $('#equip-slots').innerHTML=parts.map((p,i)=>`<button class="equip-slot ${i%2?'right':''} ${p?'equipped':''}" data-choose-slot="${i}" data-slot="${i}" aria-label="${SLOTS[i]} ${p?'번호 '+p.number+' 장착':'빈 슬롯, 장착하기'}"><span>${p?pad(p.number):'+'}</span><small>${SLOTS[i]}</small></button>`).join('');
  $('#ticket-numbers').innerHTML=ticket.map(n=>`<span class="ticket-number ${n===null?'empty':''}">${n===null?'—':pad(n)}</span>`).join('');
  const submitted=!!state.round.ticket;$('#submit-ticket').disabled=(!submitted&&!validTicket(ticket))||busy;$('#submit-ticket').innerHTML=`${submitted?'등록된 조합 결과 확인':validTicket(ticket)?'이 조합으로 로또 참여하기':'파츠를 장착해 조합 완성하기'}${icon('arrow')}`;
- renderInventory();renderFairness();if(view==='results')renderResults();scenes?.updateCharacter(parts);persist();
+ renderInventory();renderFairness();if(view==='results')renderResults();$('#character-illustration').innerHTML=characterArt(parts,flipped);persist();
 }
 function card(part,catalog=false){
  const r=RARITIES[part.rarity],equipped=state.equipped.includes(part.id),collected=state.inventory.some(p=>p.slot===part.slot&&p.rarity===part.rarity);
@@ -135,13 +135,13 @@ document.addEventListener('click',async e=>{
  if(b.id==='next-round'){if(state.round.result&&REWARDS[state.round.result.matches]&&!state.round.result.claimed){toast('이번 라운드의 데모 리워드를 먼저 받아주세요.');return;}b.disabled=true;state.round=await newRound(state.round.id+1);navigate('arcade');toast('새 라운드의 시드 해시를 공개했습니다.');return;}
  if(b.id==='verify-round'){b.textContent=await verifyLottery({seed:state.round.seed,commit:state.round.commit,numbers:state.round.result.numbers})?'✓ 시드 해시와 8개 당첨 번호가 일치합니다.':'검증 실패: 기록이 일치하지 않습니다.';return;}
  if(b.dataset.verify){const proof=state.proofs.find(p=>p.id===b.dataset.verify);b.textContent=await verifyGacha(proof)?'✓ 해시 · 부위 · 번호 · 등급 모두 일치':'검증 실패: 기록이 일치하지 않습니다.';return;}
- const actions={wallet:showWallet,deposit:showDeposit,odds:showOdds,catalog:showCatalog,help:showGuide,story:showStory,close:closeModal,'connect-wallet':connectWallet,'open-fairness':()=>{closeModal();navigate('fairness');},rotate:()=>scenes?.rotate(),sound:()=>{sound=!sound;b.setAttribute('aria-pressed',sound);b.setAttribute('aria-label',sound?'효과음 끄기':'효과음 켜기');b.querySelector('span').textContent=sound?'ON':'OFF';playSound('drop');}};actions[b.dataset.action]?.();
+ const actions={wallet:showWallet,deposit:showDeposit,odds:showOdds,catalog:showCatalog,help:showGuide,story:showStory,close:closeModal,'connect-wallet':connectWallet,'open-fairness':()=>{closeModal();navigate('fairness');},rotate:()=>{flipped=!flipped;$('#character-illustration').innerHTML=characterArt(equippedParts(),flipped);},sound:()=>{sound=!sound;b.setAttribute('aria-pressed',sound);b.setAttribute('aria-label',sound?'효과음 끄기':'효과음 켜기');b.querySelector('span').textContent=sound?'ON':'OFF';playSound('drop');}};actions[b.dataset.action]?.();
 });
 $('#draw-button').addEventListener('click',draw);$('#submit-ticket').addEventListener('click',submitTicket);$('#export-proofs').addEventListener('click',exportProofs);
 $('.brand').addEventListener('click',e=>{e.preventDefault();navigate('arcade');});
 render();
 await document.fonts.ready;
-try{scenes=createScenes(draw);scenes.updateCharacter(equippedParts());}catch(error){console.error('3D scene unavailable',error);toast('이 브라우저에서는 3D 표시를 준비하지 못했습니다. 게임 버튼은 계속 사용할 수 있습니다.');}
+try{scenes=createScenes(draw);}catch(error){console.error('3D scene unavailable',error);toast('이 브라우저에서는 3D 표시를 준비하지 못했습니다. 게임 버튼은 계속 사용할 수 있습니다.');}
 if(state.pending){await finishPending();toast('저장된 추출을 복구했습니다. 파츠가 수집함에 추가되었습니다.');}
 function updateClock(){const seconds=Math.max(0,Math.floor((state.round.expires-Date.now())/1000));const hours=Math.floor(seconds/3600),minutes=Math.floor(seconds%3600/60),secs=seconds%60;$('#countdown').innerHTML=`${pad(hours)}<span>:</span>${pad(minutes)}<span>:</span>${pad(secs)}`;}
 updateClock();setInterval(updateClock,1000);

@@ -10,8 +10,8 @@ function renderer(canvas,scene,camera,scale=.58){const r=new THREE.WebGLRenderer
 function ortho(extent){const c=new THREE.OrthographicCamera(-extent,extent,extent,-extent,.1,80);c.userData.extent=extent;return c;}
 function pipe(parent,x,y,z,w,h,d){cube(parent,x,y,z,w,h,d,'#313b41');if(h>w){for(let n=-h/2+.3;n<h/2;n+=1.4)cube(parent,x,y+n,z,w+.07,.1,d+.07,'#40494b');}else{for(let n=-w/2+.3;n<w/2;n+=1.4)cube(parent,x+n,y,z,.1,h+.07,d+.07,'#40494b');}}
 export function createScenes(onMachineClick){
- const machineCanvas=document.querySelector('#machine-canvas'),characterCanvas=document.querySelector('#character-canvas');
- let machineRenderer,characterRenderer;
+ const machineCanvas=document.querySelector('#machine-canvas');
+ let machineRenderer;
  const machineScene=new THREE.Scene();machineScene.background=new THREE.Color('#0b1017');machineScene.fog=new THREE.Fog('#0b1017',14,28);
  const camera=ortho(3.45);camera.position.set(6,5.2,11);camera.lookAt(0,2.55,0);
  try{machineRenderer=renderer(machineCanvas,machineScene,camera,.6);}catch{document.querySelector('.scene-fallback').hidden=false;return {spin(){},updateCharacter(){},rotate(){}};}
@@ -49,25 +49,9 @@ export function createScenes(onMachineClick){
  const plane=new THREE.Mesh(new THREE.PlaneGeometry(6,3.2),new THREE.MeshBasicMaterial({color:'#eb3d2b',transparent:true,opacity:.08,depthWrite:false}));plane.rotation.x=-Math.PI/2;plane.position.set(0,.035,.8);machineScene.add(plane);
  // Tiny luminous dust points are deterministic decorative positions.
  const pos=[];for(let i=0;i<50;i++)pos.push(Math.sin(i*73.9)*7,.5+((i*17)%55)/10,Math.cos(i*13.2)*3);const dustGeometry=new THREE.BufferGeometry();dustGeometry.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));const dust=new THREE.Points(dustGeometry,new THREE.PointsMaterial({color:'#807f88',size:.035,transparent:true,opacity:.4}));machineScene.add(dust);
- const characterScene=new THREE.Scene();const characterCamera=ortho(2.35);characterCamera.position.set(5,3.8,9);characterCamera.lookAt(0,2.05,0);characterRenderer=renderer(characterCanvas,characterScene,characterCamera,.72);characterRenderer.toneMappingExposure=1.45;
- characterScene.add(new THREE.AmbientLight('#b5c4da',1.3));const key=new THREE.DirectionalLight('#ffdcbb',3);key.position.set(-5,7,6);characterScene.add(key);const rim=new THREE.DirectionalLight('#8ca6d0',1.8);rim.position.set(5,3,-4);characterScene.add(rim);
- const platform=cylinder(characterScene,0,.05,0,1.2,.1,'#252d36',8);cylinder(characterScene,0,.12,0,1.08,.07,'#333b42',8);const ring=new THREE.Mesh(new THREE.TorusGeometry(1.05,.018,3,8),new THREE.MeshBasicMaterial({color:'#746553'}));ring.rotation.x=-Math.PI/2;ring.position.y=.165;characterScene.add(ring);
- let avatar=new THREE.Group();characterScene.add(avatar);let rotation=-.28;
- function updateCharacter(parts){
-  const old=avatar;avatar=new THREE.Group();avatar.rotation.y=rotation;characterScene.add(avatar);characterScene.remove(old);old.traverse(o=>{if(o.geometry)o.geometry.dispose();});
-  const color=s=>parts[s]?palette[parts[s].rarity]:'#434d5a';
-  cube(avatar,0,1.02,0,.79,.4,.48,'#363f4b');cube(avatar,0,1.35,0,.68,.3,.52,'#4e5965');
-  cube(avatar,0,2.03,0,1.05,1.08,.61,color(1));cube(avatar,0,2.08,.36,.85,.57,.09,'#434c53');cube(avatar,0,2.38,.38,.35,.09,.08,'#ba8766');cube(avatar,-.3,1.78,.39,.19,.23,.09,'#657077');cube(avatar,.3,1.78,.39,.19,.23,.09,'#657077');
-  cube(avatar,0,2.74,0,.48,.22,.42,'#333a42');cube(avatar,0,3.16,0,.86,.73,.72,color(0));cube(avatar,0,3.47,.01,.95,.18,.82,color(0));cube(avatar,0,3.18,.39,.71,.27,.11,'#202e35');cube(avatar,-.19,3.2,.455,.26,.13,.04,'#83b5b7',{emissive:'#4f9aa1',emissiveIntensity:.25});cube(avatar,.19,3.2,.455,.26,.13,.04,'#83b5b7');cube(avatar,0,2.96,.44,.34,.17,.16,'#3f5055');cube(avatar,-.46,3.05,.04,.16,.2,.38,'#575c59');cube(avatar,.46,3.05,.04,.16,.2,.38,'#575c59');
-  for(let i=0;i<2;i++){const x=i===0?-.77:.77,slot=i+2;cube(avatar,x,2.42,0,.41,.43,.58,color(slot));cube(avatar,x,1.99,0,.3,.39,.39,'#38434e');cube(avatar,x,1.53,.04,.39,.54,.48,color(slot));cube(avatar,x,1.24,.1,.34,.2,.42,'#42545e');if(parts[slot]?.rarity>=3)cube(avatar,x,1.58,.3,.31,.15,.06,'#b65f57',{emissive:'#b15249',emissiveIntensity:.35});}
-  for(let i=0;i<2;i++){const x=i===0?-.27:.27,slot=i+4;cube(avatar,x,.89,0,.39,.5,.5,color(slot));cube(avatar,x,.55,.03,.35,.19,.43,'#35424e');cube(avatar,x,.35,.03,.39,.26,.46,color(slot));cube(avatar,x,.19,.19,.43,.24,.76,'#56646d');}
-  if(parts[6]){cube(avatar,0,2.12,-.54,.7,.95,.4,color(6));cube(avatar,0,2.2,-.77,.28,.5,.13,'#9cac91');}
-  if(parts[7]){cube(avatar,.44,2.45,.35,.22,.32,.24,color(7));cube(avatar,.44,2.47,.49,.11,.13,.04,'#f4a17d',{emissive:'#f87c49',emissiveIntensity:.5});}
- }
- updateCharacter([]);
  const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();machineCanvas.addEventListener('click',event=>{const rect=machineCanvas.getBoundingClientRect();pointer.set((event.clientX-rect.left)/rect.width*2-1,-(event.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);if(raycaster.intersectObjects([redButton,buttonBase]).length)onMachineClick();});
- let dragging=false,lastX=0;characterCanvas.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;characterCanvas.setPointerCapture(e.pointerId);});characterCanvas.addEventListener('pointermove',e=>{if(dragging){rotation+=(e.clientX-lastX)*.02;lastX=e.clientX;}});characterCanvas.addEventListener('pointerup',()=>dragging=false);characterCanvas.addEventListener('pointercancel',()=>dragging=false);
  let spinEnd=0;let frame=0;let running=true;const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
- function animate(){if(!running)return;requestAnimationFrame(animate);if(document.hidden)return;frame++;const now=performance.now(),spinning=now<spinEnd;capsules.forEach(({cap,x,y,z},i)=>{cap.rotation.y=spinning?now*.005+i:i*.5;cap.rotation.z=spinning?Math.sin(now*.008+i)*.5:0;cap.position.x=spinning?Math.sin(now*.007+i)*.85:x;cap.position.y=spinning?y+Math.sin(now*.015+i)*.12:y;});redButton.position.y=spinning?1.86:1.94;buttonLight.intensity=spinning?10+Math.sin(now*.015)*6:8;ceilingLight.intensity=12+(reduced?0:Math.sin(now*.0018)*.8);avatar.rotation.y=rotation+(reduced||dragging?0:Math.sin(now*.0005)*.07);machineRenderer.render(machineScene,camera);characterRenderer.render(characterScene,characterCamera);}
- animate();return {spin(){spinEnd=performance.now()+1400;},updateCharacter,rotate(){rotation+=Math.PI/2;},dispose(){running=false;machineRenderer.dispose();characterRenderer.dispose();}};
+ function animate(){if(!running)return;requestAnimationFrame(animate);if(document.hidden)return;frame++;const now=performance.now(),spinning=now<spinEnd;capsules.forEach(({cap,x,y,z},i)=>{cap.rotation.y=spinning?now*.005+i:i*.5;cap.rotation.z=spinning?Math.sin(now*.008+i)*.5:0;cap.position.x=spinning?Math.sin(now*.007+i)*.85:x;cap.position.y=spinning?y+Math.sin(now*.015+i)*.12:y;});redButton.position.y=spinning?1.86:1.94;buttonLight.intensity=spinning?10+Math.sin(now*.015)*6:8;ceilingLight.intensity=12+(reduced?0:Math.sin(now*.0018)*.8);machineRenderer.render(machineScene,camera);}
+ animate();return {spin(){spinEnd=performance.now()+1400;},dispose(){running=false;machineRenderer.dispose();}};
 }
+
