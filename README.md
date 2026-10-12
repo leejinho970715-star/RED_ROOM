@@ -8,7 +8,9 @@
 
 GitHub 저장소: https://github.com/leejinho970715-star/RED_ROOM
 
-`.github/workflows/pages.yml`이 `main` 푸시 시 게임 규칙 테스트를 실행하고 `dist/`를 GitHub Pages에 배포합니다. 모든 파일은 상대 경로로 참조하여 `/RED_ROOM/` 하위 경로에서도 동작합니다. 실제 가상화폐 결제·출금·NFT 발행은 연결되지 않은 데모입니다.
+`.github/workflows/pages.yml`이 `main` 푸시 시 게임 규칙 테스트를 실행하고 `dist/`를 GitHub Pages에 배포합니다. 게임 파일은 상대 경로로 참조하여 `/RED_ROOM/` 하위 경로에서도 동작합니다. 공유 메타데이터의 대표 URL과 이미지 URL은 공개 GitHub Pages 주소를 사용합니다. 실제 가상화폐 결제·출금·NFT 발행은 연결되지 않은 데모입니다.
+
+파비콘은 빨간 바탕의 픽셀 R 마크로 SVG, 32px PNG, ICO, 180px Apple 터치 아이콘을 제공합니다. `scripts/generate-brand-icons.ps1`로 동일한 아이콘을 재생성할 수 있습니다. Open Graph / X 공유 이미지는 `dist/assets/og-red-room-v1.png`(1734×907)이며, 내장 이미지 생성 도구로 제작한 프롬프트는 `dist/assets/OG-IMAGE-PROMPT.txt`에 보관합니다.
 
 ```powershell
 git clone https://github.com/leejinho970715-star/RED_ROOM.git

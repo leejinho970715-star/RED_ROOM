@@ -1,0 +1,13 @@
+Tool: built-in image_gen. Opaque PNG output, 1734x907 pixels.
+Reference inputs: this project's generated dystopian-basement.png and original pixel-robot-parts-v1.png. No user-supplied character reference images were used.
+
+Use case: ads-marketing
+Asset type: Open Graph social link preview for the RED ROOM pixel arcade game.
+Primary request: Create a finished premium wide 1.91:1 landscape sharing banner, ideally 1536x804. The left half carries huge readable two-line pixel lettering "RED" then "ROOM" in luminous warm off-white with red edges. Below in smaller pixel lettering: "ASSEMBLE YOUR DESTINY". A tiny lower-left label reads "PIXEL GACHA · DEMO".
+Input images: Image 1 is the project's own dystopian underground basement background, use as environment and palette reference. Image 2 is the project's own original pixel mechanical robot parts sheet, use only as robot design reference; do not display the sprite sheet or a grid.
+Scene/backdrop: ruined industrial underground basement, concrete pillars, ceiling pipes, restrained atmospheric haze, dark navy charcoal shadows.
+Subject: On the right a worn dark arcade gacha machine, glass capsule chamber, one large tactile three-dimensional circular red push button on its control console, intense red emission spilling onto the floor. One small fully assembled angular industrial pixel robot beside the machine, orange armor, narrow sensor face, claw arms and mechanical legs consistent with row 1 of the supplied robot reference.
+Style/medium: finished game key art in deliberate crisp 2D pixel art, limited stepped highlights, clean pixels, no hand-drawn cartoon outlines. The rounded physical button is visibly raised with metal bezel and bright red glow.
+Composition: wide social card, dominant brand title on left with clear negative space behind it, machine and small robot on right. Generous safe margins of 7 percent on all sides; all important content fully inside frame. Strong title readability when reduced to phone thumbnail.
+Text verbatim: "RED" / "ROOM"; "ASSEMBLE YOUR DESTINY"; "PIXEL GACHA · DEMO".
+Constraints: no other text, no watermarks, no crypto logos, no promises of earnings, no giant character heads, no humanoid reference costumes. Use only the supplied project art as design references. Opaque background.
