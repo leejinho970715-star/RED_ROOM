@@ -1,15 +1,15 @@
 export const SLOTS = ['헤드','바디','왼팔','오른팔','왼다리','오른다리','백팩','기어'];
 export const FILTERS = ['head','body','arms','arms','legs','legs','gear','gear'];
 export const RARITIES = [
- {name:'COMMON',label:'커먼',chance:60,weight:6000,color:'#98a5b5',sale:100,prefix:'클락워크'},
- {name:'MAGIC',label:'매직',chance:25,weight:2500,color:'#a4bc94',sale:300,prefix:'스크랩 TV'},
- {name:'RARE',label:'레어',chance:10,weight:1000,color:'#83b9d9',sale:700,prefix:'폭스 러너'},
- {name:'UNIQUE',label:'유니크',chance:4,weight:400,color:'#98a9de',sale:1500,prefix:'젤리 맵퍼'},
- {name:'LEGENDARY',label:'레전더리',chance:.9,weight:90,color:'#d9aa73',sale:5000,prefix:'제이드 비틀'},
- {name:'EPIC',label:'에픽',chance:.09,weight:9,color:'#c799dd',sale:25000,prefix:'이클립스'},
- {name:'MYTHIC',label:'신화',chance:.01,weight:1,color:'#ff8e83',sale:100000,prefix:'스타 아키비스트'}
+ {name:'COMMON',label:'커먼',chance:60,weight:6000,color:'#98a5b5',sale:100,prefix:'리벳'},
+ {name:'MAGIC',label:'매직',chance:25,weight:2500,color:'#a4bc94',sale:300,prefix:'릴레이'},
+ {name:'RARE',label:'레어',chance:10,weight:1000,color:'#83b9d9',sale:700,prefix:'스위치'},
+ {name:'UNIQUE',label:'유니크',chance:4,weight:400,color:'#98a9de',sale:1500,prefix:'퍼니스'},
+ {name:'LEGENDARY',label:'레전더리',chance:.9,weight:90,color:'#d9aa73',sale:5000,prefix:'파일런'},
+ {name:'EPIC',label:'에픽',chance:.09,weight:9,color:'#c799dd',sale:25000,prefix:'옵시디언'},
+ {name:'MYTHIC',label:'신화',chance:.01,weight:1,color:'#ff8e83',sale:100000,prefix:'오로라'}
 ];
-export const BASE_NAMES = ['헬멧','코어','건틀릿 L','건틀릿 R','레그 L','레그 R','리액터 팩','시그널 기어'];
+export const BASE_NAMES = ['센서 헤드','섀시','그리퍼 L','그리퍼 R','레그 L','레그 R','리액터 팩','시그널 기어'];
 export const CATALOG = RARITIES.flatMap((r,rarity)=>SLOTS.map((s,slot)=>({typeId:`${rarity}-${slot}`,slot,rarity})));
 export const COST = 1000; // integer micro-ETH; demo only
 export const REWARDS = {0:0,1:0,2:0,3:3000,4:10000,5:100000,6:500000,7:1500000,8:12840000};
