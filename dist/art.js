@@ -19,12 +19,18 @@ const BACKPACK='M129 272 Q124 252 143 250 L240 250 Q259 254 258 273 L260 366 Q25
 const GEAR='M155 285 Q155 277 164 277 H214 Q225 277 225 287 V322 Q225 333 215 333 H164 Q155 333 155 323Z';
 const PATHS=[null,BODY,LEFT_ARM,RIGHT_ARM,LEFT_LEG,RIGHT_LEG,BACKPACK,GEAR];
 const VIEWS=['50 0 290 285','91 255 203 130','65 275 86 138','238 275 84 138','104 350 86 150','195 350 86 150','114 235 157 159','146 265 89 80'];
+function accessory(slot,rarity){
+ const color=RARITIES[rarity].color,accent=['#cc916d','#b9c993','#83e4d2','#ef8bd3','#ec874e','#bded47','#70f0f2'][rarity];
+ if(slot===6)return `<g stroke="#10131b" stroke-width="4" stroke-linejoin="round"><path d="M48 41V25q0-13 15-13h35q15 0 15 13v16" fill="none" stroke="${color}" stroke-width="9"/><path d="M36 40Q31 30 22 36L15 113q0 15 25 12M118 40q11-10 19-3l8 79q0 14-25 13" fill="#303945"/><path d="M42 25q-14 0-14 16v84q0 20 20 20h69q17 0 17-20V43q0-18-20-18Z" fill="${color}"/><path d="M43 37h74v37H43Z" fill="#242d3a"/><path d="M43 40h74v12H43Z" fill="${accent}" stroke-width="2"/><path d="M49 88h59q12 0 12 13v24q0 9-11 9H49q-10 0-10-11V101q0-13 10-13Z" fill="#343e4b"/><path d="M58 78v23h13V78M92 78v23h13V78" fill="#d2d0bf"/><path d="M43 31v34M32 113v21M126 45v47" stroke="#ffffff" stroke-opacity=".22" stroke-width="3"/><circle cx="80" cy="118" r="8" fill="${accent}"/>${rarity>=5?`<path d="M80 109l4 7h-8z" fill="#e8ecd8" stroke="none"/>`:''}</g>`;
+ return `<g stroke="#10131b" stroke-width="4" stroke-linejoin="round"><path d="M51 47V17q0-5 7-5h5v35" fill="#596571"/><path d="M101 47V29h9v18" fill="#596571"/><path d="M34 41q0-10 13-10h66q12 0 12 10v89q0 14-14 14H47q-13 0-13-14Z" fill="${color}"/><path d="M43 47h73v43H43Z" fill="#172331"/><path d="M49 55h61v24H49Z" fill="${accent}" stroke-width="2"/><path d="M58 64h9l4-5 7 13 6-9h13" fill="none" stroke="#effce9" stroke-width="2"/><circle cx="51" cy="111" r="7" fill="#d6dfd8"/><circle cx="105" cy="111" r="7" fill="${accent}"/><path d="M69 104h17v5H69zM69 114h17v5H69zM52 133h56" fill="#323c49" stroke-width="2"/><path d="M39 43v69" fill="none" stroke="#fff" stroke-opacity=".25" stroke-width="2"/></g>`;
+}
 function imageLayer(slot,rarity,muted=false){
  const col=rarity%4,row=Math.floor(rarity/4),id=`illustration-mask-${serial++}`,path=slot===0?HEADS[rarity]:PATHS[slot];
  const transform=slot===0?(rarity>=4?'translate(0 16)':rarity===2?'translate(0 4)':''):'';
  return `<g ${transform?`transform="${transform}"`:''} ${muted?'opacity=".23"':''}><defs><clipPath id="${id}"><path d="${path}"/></clipPath></defs><g clip-path="url(#${id})"><image href="${ATLAS}" x="${-col*384}" y="${-row*512}" width="1536" height="1024" preserveAspectRatio="none"/></g></g>`;
 }
 export function partArt(slot,rarity=0){
+ if(slot>=6)return `<svg class="illustrated-part" viewBox="0 0 160 160" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">${accessory(slot,rarity)}</svg>`;
  const border=RARITIES[rarity].color;
  const extra=slot===6?`<path d="${BACKPACK}" fill="#171d27" stroke="${border}" stroke-width="7"/><path d="M118 272v81M267 272v81" stroke="${border}" stroke-width="8"/>`:slot===7?`<path d="${GEAR}" fill="#202833" stroke="${border}" stroke-width="5"/>`:'';
  return `<svg class="illustrated-part" viewBox="${VIEWS[slot]}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">${extra}${imageLayer(slot,rarity)}</svg>`;
@@ -32,5 +38,5 @@ export function partArt(slot,rarity=0){
 export function characterArt(parts,flipped=false){
  const get=slot=>imageLayer(slot,parts[slot]?.rarity??0,!parts[slot]);
  const shadow='<ellipse cx="192" cy="492" rx="100" ry="11" fill="#060a12" opacity=".65"/><ellipse cx="192" cy="493" rx="102" ry="17" fill="none" stroke="#796657" stroke-width="1.5" opacity=".65"/>';
- return `<svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="장착한 2D 일러스트 파츠로 조립된 생존자">${shadow}<g ${flipped?'transform="translate(384 0) scale(-1 1)"':''}>${parts[6]?`<path d="M116 281 Q96 277 92 299 L87 351 Q86 371 118 372 L133 363 V289Z" fill="${RARITIES[parts[6].rarity].color}" stroke="#10141d" stroke-width="4"/>`:''}${get(4)}${get(5)}${get(1)}${get(2)}${get(3)}${get(0)}${parts[7]?get(7):''}</g></svg>`;
+ return `<svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="장착한 2D 일러스트 파츠로 조립된 생존자">${shadow}<g ${flipped?'transform="translate(384 0) scale(-1 1)"':''}>${parts[6]?`<g transform="translate(58 256) scale(.62)">${accessory(6,parts[6].rarity)}</g>`:''}${get(4)}${get(5)}${get(1)}${get(2)}${get(3)}${get(0)}${parts[7]?`<g transform="translate(202 278) scale(.34)">${accessory(7,parts[7].rarity)}</g>`:''}</g></svg>`;
 }
