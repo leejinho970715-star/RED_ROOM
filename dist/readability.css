@@ -1,0 +1,92 @@
+/* Keep secondary copy readable without squeezing the game controls. */
+small, sub, sup { font-size: 16px; }
+body { line-height: 1.6; }
+.sidebar { width: 270px; overflow-y: auto; }
+.app-shell { margin-left: 270px; }
+.brand-mark { flex-shrink: 0; }
+.brand small { white-space: normal; line-height: 1.5; letter-spacing: 0; }
+.sector, .sidebar-footer { flex-wrap: wrap; }
+.nav-item { height: auto; min-height: 52px; padding: 12px; }
+.topbar { height: auto; min-height: 80px; gap: 16px; padding-top: 16px; padding-bottom: 16px; flex-wrap: wrap; }
+.breadcrumb, .header-actions { flex-wrap: wrap; }
+.stat-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.stat-strip strong { flex-wrap: wrap; }
+.stat-strip>div { min-width: 0; }
+.play-grid { grid-template-columns: minmax(0, 1fr) 380px; }
+.panel-heading { height: auto; min-height: 62px; padding-top: 12px; padding-bottom: 12px; gap: 12px; flex-wrap: wrap; }
+.panel-heading>div, .section-heading, .section-heading>div { flex-wrap: wrap; }
+.section-heading { gap: 12px; }
+.scene-label { right: 20px; flex-wrap: wrap; }
+.scene-right { top: 76px; }
+.scene-commit { white-space: normal; text-align: center; overflow-wrap: anywhere; bottom: 54px; }
+.scene-floor-label { white-space: normal; text-align: center; width: 85%; letter-spacing: 0; }
+.machine-controls { flex-wrap: wrap; }
+.controls-copy { flex: 1 1 210px; min-width: 0; }
+.controls-copy h3 { white-space: normal; }
+.red-button-control { margin-inline: auto; }
+.draw-cost, .draw-status { white-space: normal; text-align: center; line-height: 1.6; }
+.character-stage { height: 340px; }
+.equip-slot { width: 76px; height: 60px; gap: 3px; }
+.equip-slot[data-slot="0"], .equip-slot[data-slot="1"] { top: 18px; }
+.equip-slot[data-slot="2"], .equip-slot[data-slot="3"] { top: 92px; }
+.equip-slot[data-slot="4"], .equip-slot[data-slot="5"] { top: 166px; }
+.equip-slot[data-slot="6"], .equip-slot[data-slot="7"] { top: 240px; }
+.character-caption { white-space: normal; text-align: center; width: 100%; }
+.rotate-button { bottom: 36px; }
+.ticket-number { height: 40px; }
+.submit-button, .equip-button { height: auto; min-height: 44px; padding-block: 8px; }
+.loadout-heading, .loadout-note { flex-wrap: wrap; }
+.parts-grid, .full-inventory .parts-grid { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.part-card-top { gap: 8px; flex-wrap: wrap; }
+.part-card-top .rarity { margin-right: 0; }
+.part-name { line-height: 1.6; overflow-wrap: anywhere; }
+.part-card-actions { flex-wrap: wrap; }
+.part-card-actions .equip-button { min-width: 95px; }
+.sell-button { flex: 1 1 100px; min-height: 44px; }
+.collection-actions, .inventory-toolbar, .filters { flex-wrap: wrap; }
+.collection-note { flex-wrap: wrap; }
+.bulk-totals { flex-wrap: wrap; }
+.page-footer, .page-footer>div { flex-wrap: wrap; gap: 16px; line-height: 1.8; }
+.deposit-amounts { flex-wrap: wrap; }
+.deposit-amounts button { min-width: 120px; }
+.catalog-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.slot-pick { flex-wrap: wrap; }
+.odds-table { table-layout: fixed; overflow-wrap: anywhere; }
+.toast { left: calc(50% + 135px); }
+@media (max-width: 1250px) {
+  .play-grid { grid-template-columns: minmax(0, 1fr); }
+  .character-panel { width: 100%; }
+  .character-stage { max-width: 450px; margin-inline: auto; }
+}
+@media (max-width: 760px) {
+  .sidebar { width: 100%; overflow-y: visible; }
+  .app-shell { margin-left: 0; }
+  .sidebar nav { gap: 2px; }
+  .nav-item { padding: 10px 3px; gap: 5px; }
+  .nav-item svg { width: 16px; }
+  .topbar { padding-inline: 16px; }
+  .breadcrumb { gap: 8px; }
+  .header-actions { width: 100%; justify-content: space-between; gap: 12px; }
+  .intro-coordinate { display: none; }
+  .stat-strip>div { padding: 16px 12px; }
+  .stat-strip strong { font-size: 20px; overflow-wrap: anywhere; }
+  .machine-controls { justify-content: center; }
+  .controls-copy { text-align: center; flex-basis: 100%; }
+  .controls-copy p { max-width: none; }
+  .parts-grid, .full-inventory .parts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .part-card-actions { flex-direction: column; }
+  .sell-button { flex: auto; }
+  .audio-volume { flex-wrap: wrap; margin-left: 0; }
+  .bulk-totals { align-items: flex-start; }
+  .bulk-totals strong { white-space: normal; overflow-wrap: anywhere; }
+  .bulk-sale-list div { flex-wrap: wrap; }
+  .character-stage { height: 340px; }
+  .toast { left: 50%; }
+  .catalog-grid { grid-template-columns: 1fr; }
+  .result-detail { grid-template-columns: 1fr; }
+  .result-detail>div+div { border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 360px) {
+  .parts-grid, .full-inventory .parts-grid, .stat-strip { grid-template-columns: 1fr; }
+  .ticket-numbers { grid-template-columns: repeat(4, 1fr); }
+}

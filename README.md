@@ -86,3 +86,9 @@ npm test
 - `tests/game.test.mjs`: 확률 전체 구간, 56종 구성, 판매 정산, 중복 번호 차단, 시드/결과 검증 테스트.
 
 Three.js, Galmuri, Silkscreen의 라이선스를 `dist/assets/`에 포함했습니다.
+
+## Vercel 배포
+
+저장소 루트의 vercel.json에서 framework를 Other(null), outputDirectory를 dist로 고정합니다. 서버용 Node 자동 감지 대신 기존 정적 게임 파일을 배포하고, npm test 통과 후 배포합니다. Vercel Root Directory는 저장소 루트(빈 값)를 사용합니다. main 푸시는 GitHub Pages와 Vercel 자동 배포를 함께 실행합니다.
+
+작은 UI 텍스트는 데스크톱·모바일에서 최소 16px이며, readability.css가 확대된 글씨에 맞춰 카드·메뉴·모달 줄바꿈과 여백을 조정합니다.
