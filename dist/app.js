@@ -4,6 +4,8 @@ import {createScenes} from './scene.js';
 import {createRedButton} from './red-button.js';
 import {createGameAudio} from './audio.js';
 import {celebrateDrop} from './fireworks.js';
+import {createNavigation} from './navigation.js';
+createNavigation();
 const $=s=>document.querySelector(s);
 const icon=id=>`<svg aria-hidden="true"><use href="#i-${id}"/></svg>`;
 const eth=n=>(n/1e6).toFixed(4);
@@ -69,7 +71,7 @@ function executeBulkSale(){
 }
 function navigate(next){
  view=next;$('#arcade-view').hidden=!['arcade','inventory'].includes(next);$('#arcade-view').classList.toggle('full-inventory',next==='inventory');$('#results-view').hidden=next!=='results';$('#fairness-view').hidden=next!=='fairness';
- const names={arcade:'GACHA ARCADE',inventory:'MY NFT PARTS',results:'LOTTERY & REWARDS',fairness:'FAIRNESS CHECK'};$('#breadcrumb').textContent=names[next];document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.nav===next));render();window.scrollTo({top:0,behavior:'smooth'});
+ const names={arcade:'GACHA ARCADE',inventory:'MY NFT PARTS',results:'LOTTERY & REWARDS',fairness:'FAIRNESS CHECK'};$('#breadcrumb').textContent=names[next];document.querySelectorAll('.nav-item').forEach(b=>{b.classList.toggle('active',b.dataset.nav===next);if(b.dataset.nav===next)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});render();window.scrollTo({top:0,behavior:'smooth'});
 }
 function equip(id,showToast=true){
  const part=state.inventory.find(p=>p.id===id);if(!part)return;

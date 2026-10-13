@@ -27,7 +27,7 @@
   <meta name="twitter:image" content="https://leejinho970715-star.github.io/RED_ROOM/assets/og-red-room-v1.png">
   <meta name="twitter:image:alt" content="RED ROOM 픽셀 지하실, 로봇과 발광 레드버튼 가챠 머신">
   <link rel="preload" as="image" href="./assets/dystopian-basement.png">
-  <link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="./collection.css"><link rel="stylesheet" href="./polish.css"><link rel="stylesheet" href="./illustration.css"><link rel="stylesheet" href="./environment.css"><link rel="stylesheet" href="./red-button.css"><link rel="stylesheet" href="./audio.css"><link rel="stylesheet" href="./reveal-collection.css"><link rel="stylesheet" href="./readability.css">
+  <link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="./collection.css"><link rel="stylesheet" href="./polish.css"><link rel="stylesheet" href="./illustration.css"><link rel="stylesheet" href="./environment.css"><link rel="stylesheet" href="./red-button.css"><link rel="stylesheet" href="./audio.css"><link rel="stylesheet" href="./reveal-collection.css"><link rel="stylesheet" href="./readability.css"><link rel="stylesheet" href="./navigation.css">
 </head>
 <body>
 <svg class="icon-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
@@ -45,24 +45,24 @@
  <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 3h7v7M21 3 10 14M10 4H4v16h16v-6"/></symbol>
  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 4 3c-1 .5-1 1-1 2M12 17h.1"/></symbol>
 </defs></svg>
-<aside class="sidebar">
+<aside class="sidebar" id="side-menu" aria-label="RED ROOM menu"><div class="sidebar-top"><button id="menu-close" class="menu-close" aria-label="Close menu"><span aria-hidden="true">×</span><span>CLOSE</span></button></div>
  <a class="brand" href="#" aria-label="RED ROOM 홈"><span class="brand-mark">R<span>■</span></span><span>RED<span>ROOM</span><small>UNDERGROUND LOTTERY</small></span></a>
- <div class="sector"><span class="status-dot"></span> SECTOR 07 <span>//</span> 지하 3층</div>
+ <div class="sector"><span class="status-dot"></span> SECTOR 07 <span>//</span> B3</div>
  <div class="nav-label">PLAYGROUND</div>
- <nav aria-label="주 메뉴">
-  <button class="nav-item active" data-nav="arcade"><svg><use href="#i-grid"/></svg>가챠 아케이드<span class="nav-indicator"></span></button>
-  <button class="nav-item" data-nav="inventory"><svg><use href="#i-box"/></svg>나의 NFT 파츠<span id="nav-count" class="nav-badge">8</span></button>
-  <button class="nav-item" data-nav="results"><svg><use href="#i-trophy"/></svg>로또 & 리워드</button>
-  <button class="nav-item" data-nav="fairness"><svg><use href="#i-shield"/></svg>공정성 검증<small class="green-dot"></small></button>
+ <nav aria-label="Main navigation">
+  <button class="nav-item active" data-nav="arcade" aria-current="page"><svg><use href="#i-grid"/></svg><span class="nav-name">GACHA ARCADE</span><span class="nav-indicator"></span></button>
+  <button class="nav-item" data-nav="inventory"><svg><use href="#i-box"/></svg><span class="nav-name">MY NFT PARTS</span><span id="nav-count" class="nav-badge">8</span></button>
+  <button class="nav-item" data-nav="results"><svg><use href="#i-trophy"/></svg><span class="nav-name">LOTTERY &amp; REWARDS</span></button>
+  <button class="nav-item" data-nav="fairness"><svg><use href="#i-shield"/></svg><span class="nav-name">FAIRNESS CHECK</span><small class="green-dot"></small></button>
  </nav>
  <div class="sidebar-bottom">
   <div class="system-card"><span class="mini-tag">SYSTEM MESSAGE</span><p>세상이 멈춘 곳에서도,<br>당신의 운명은 계속됩니다.</p><span class="system-line"></span><small>KEEP THE RED LIGHT ON.</small></div>
-  <button class="help-link" data-action="help"><svg><use href="#i-help"/></svg>생존자 가이드<svg><use href="#i-external"/></svg></button>
+  <button class="help-link" data-action="help"><svg><use href="#i-help"/></svg>SURVIVOR GUIDE<svg><use href="#i-external"/></svg></button>
   <div class="sidebar-footer"><span class="status-dot"></span> DEMO NETWORK <span>v.0.1</span></div>
  </div>
 </aside>
-<div class="app-shell">
- <header class="topbar"><div class="breadcrumb"><span>PLAYGROUND</span><span>/</span><strong id="breadcrumb">GACHA ARCADE</strong></div><div class="header-actions"><span class="network"><span class="status-dot"></span>LOCAL DEMO</span><button class="wallet-button" data-action="wallet"><svg><use href="#i-wallet"/></svg><span id="wallet-label">CONNECT WALLET</span></button></div></header>
+<div id="menu-backdrop" class="menu-backdrop" hidden aria-hidden="true"></div><div class="app-shell">
+ <header class="topbar"><div class="topbar-leading"><button id="menu-toggle" class="menu-toggle" aria-label="Close menu" aria-controls="side-menu" aria-expanded="true"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>MENU</span></button><div class="breadcrumb"><span>PLAYGROUND</span><span>/</span><strong id="breadcrumb">GACHA ARCADE</strong></div></div><div class="header-actions"><span class="network"><span class="status-dot"></span>LOCAL DEMO</span><button class="wallet-button" data-action="wallet"><svg><use href="#i-wallet"/></svg><span id="wallet-label">CONNECT WALLET</span></button></div></header>
  <main>
   <section class="page-intro"><div><div class="eyebrow"><span></span> THE LAST ARCADE ON EARTH</div><h1>어둠 속, 당신의 다음 기회<span>.</span></h1><p>버튼을 누르고, 파츠를 모으고, 당신만의 운명을 조립하세요.</p></div><div class="intro-coordinate">37°33′ N / 126°58′ E<br><span>UNDERGROUND · SEOUL</span></div></section>
   <section class="audio-controls" aria-label="게임 오디오 설정">

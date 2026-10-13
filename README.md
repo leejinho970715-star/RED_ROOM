@@ -92,3 +92,5 @@ Three.js, Galmuri, Silkscreen의 라이선스를 `dist/assets/`에 포함했습�
 저장소 루트의 vercel.json에서 framework를 Other(null), outputDirectory를 dist로 고정합니다. 서버용 Node 자동 감지 대신 기존 정적 게임 파일을 배포하고, npm test 통과 후 배포합니다. Vercel Root Directory는 저장소 루트(빈 값)를 사용합니다. main 푸시는 GitHub Pages와 Vercel 자동 배포를 함께 실행합니다.
 
 작은 UI 텍스트는 데스크톱·모바일에서 최소 16px이며, readability.css가 확대된 글씨에 맞춰 카드·메뉴·모달 줄바꿈과 여백을 조정합니다.
+
+메뉴는 GACHA ARCADE / MY NFT PARTS / LOTTERY & REWARDS / FAIRNESS CHECK / SURVIVOR GUIDE 영문으로 표시합니다. navigation.js 및 navigation.css에서 MENU/CLOSE 버튼, PC 메뉴 상태 저장, 모바일 오버레이 메뉴, 바깥 영역·Escape 닫기, 키보드 포커스 이동을 관리합니다.
