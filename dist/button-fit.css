@@ -1,0 +1,73 @@
+/* Size controls around the 16px labels instead of squeezing their text. */
+button:not(.draw-button):not(.equip-slot):not(.slot-pick) {
+  line-height: 1.5;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+.wallet-button, .menu-toggle, .menu-close, .audio-controls>button,
+.filters>button, .catalog-tabs button, .bulk-toolbar button {
+  height: auto;
+  min-height: 46px;
+  padding: 10px 16px;
+  flex-shrink: 0;
+}
+.sidebar .nav-item { padding: 14px 12px; min-height: 56px; }
+.sidebar .nav-item .nav-name { white-space: nowrap; }
+.text-button { min-height: 44px; gap: 8px; }
+.add-balance { width: 44px; height: 44px; flex-shrink: 0; }
+.submit-button { height: auto; min-height: 50px; padding: 12px 16px; gap: 10px; }
+.parts-grid, .full-inventory .parts-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.part-card { container-type: inline-size; }
+.part-card-actions { display: grid; grid-template-columns: 1fr; gap: 8px; align-items: stretch; }
+.part-card-actions .equip-button, .part-card-actions .sell-button {
+  width: 100%; min-width: 0; height: auto; min-height: 48px;
+  margin: 0; padding: 11px 12px; display: flex;
+  flex-direction: row; align-items: center; justify-content: center; gap: 8px;
+}
+.part-card-actions .sell-button span { line-height: 1.5; }
+.part-card-actions .equip-button svg { width: 16px; height: 16px; }
+@container (min-width: 300px) {
+  .part-card-actions { grid-template-columns: 1fr 1fr; }
+}
+.part-meta { flex-wrap: wrap; column-gap: 10px; row-gap: 4px; }
+.bulk-toolbar button { min-width: 112px; }
+.bulk-toolbar { column-gap: 14px; row-gap: 12px; }
+.modal-primary, .modal-secondary { min-height: 50px; padding: 12px 16px; }
+.modal-primary svg { width: 16px; height: 16px; margin-left: 8px; vertical-align: middle; }
+.secondary-button, .verify-button, .result-actions button, .results-empty button {
+  min-height: 48px; height: auto; padding: 12px 16px; max-width: 100%;
+}
+.result-actions { flex-wrap: wrap; }
+.modal-top>button { width: 44px; height: 44px; flex-shrink: 0; }
+.modal-top { gap: 12px; }
+.deposit-amounts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.deposit-amounts button { min-width: 0; min-height: 78px; padding: 12px 8px; }
+.equip-slot { width: 80px; height: 64px; padding: 6px; gap: 2px; line-height: 1.25; }
+.equip-slot span, .equip-slot small { line-height: 1.25; white-space: nowrap; }
+.rotate-button { min-height: 36px; padding: 5px 12px; }
+.red-button-control { flex: 0 1 280px; width: 280px; max-width: 100%; }
+.draw-cost, .draw-status { white-space: nowrap; letter-spacing: 0; }
+.draw-hint { white-space: nowrap; }
+.machine-controls { flex-wrap: wrap; }
+@media (max-width: 760px) {
+  .sidebar .nav-item { padding: 14px 10px; gap: 8px; }
+  .sidebar .help-link { gap: 8px; padding-inline: 6px; }
+  .bulk-toolbar button { min-width: 0; width: 100%; }
+  .filters { gap: 8px; }
+  .filters>button { padding: 10px 14px; }
+  .catalog-tabs { gap: 8px; }
+  .catalog-tabs button { padding: 10px 14px; }
+  dialog { padding: 20px 16px; }
+  .modal-primary, .modal-secondary, .secondary-button, .verify-button, .result-actions button {
+    white-space: normal !important; word-break: keep-all; text-wrap: balance;
+    height: auto; min-height: 50px; line-height: 1.5;
+  }
+  .modal-primary, .modal-secondary { padding: 13px 12px; }
+  .submit-button { padding-inline: 10px; gap: 8px; }
+}
+@media (max-width: 360px) {
+  .submit-button { white-space: normal !important; text-wrap: balance; }
+  .draw-cost { white-space: normal; text-wrap: balance; }
+  .deposit-amounts { grid-template-columns: 1fr; }
+}

@@ -94,3 +94,5 @@ Three.js, Galmuri, Silkscreen의 라이선스를 `dist/assets/`에 포함했습�
 작은 UI 텍스트는 데스크톱·모바일에서 최소 16px이며, readability.css가 확대된 글씨에 맞춰 카드·메뉴·모달 줄바꿈과 여백을 조정합니다.
 
 메뉴는 GACHA ARCADE / MY NFT PARTS / LOTTERY & REWARDS / FAIRNESS CHECK / SURVIVOR GUIDE 영문으로 표시합니다. navigation.js 및 navigation.css에서 MENU/CLOSE 버튼, PC 메뉴 상태 저장, 모바일 오버레이 메뉴, 바깥 영역·Escape 닫기, 키보드 포커스 이동을 관리합니다.
+
+button-fit.css는 최소 16px 텍스트에 맞춰 주요 버튼의 높이·여백을 조정하고, 카드 자체 너비에 따라 장착/판매 버튼 배치를 전환합니다. 짧은 버튼 라벨은 한 줄로 유지하고, 작은 화면의 긴 모달 문구는 버튼 높이를 늘려 자연스럽게 표시합니다.
