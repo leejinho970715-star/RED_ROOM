@@ -1,7 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {LOOKS,ACCESSORIES,MOODS,MISSIONS,DEFAULT_LOOK,validLook,evaluateLook,rewardForResult} from '../dist/dress-up/rules.js';
+import {LOOKS,LOOK_GROUPS,ACCESSORIES,MOODS,MISSIONS,DEFAULT_LOOK,validLook,evaluateLook,rewardForResult} from '../dist/dress-up/rules.js';
+test('eighteen distinct outfits are covered exactly once by wardrobe categories',()=>{
+  assert.equal(LOOKS.length,18);assert.equal(new Set(LOOKS.map(l=>l.id)).size,18);
+  const grouped=LOOK_GROUPS.filter(g=>g.id!=='all').flatMap(g=>g.looks);
+  assert.equal(grouped.length,18);assert.equal(new Set(grouped).size,18);
+  assert.deepEqual([...grouped].sort(),LOOKS.map(l=>l.id).sort());
+});
 test('every style challenge is solvable at 100 points and mismatched styles receive lower scores',()=>{
   for(const mission of MISSIONS){
     const perfect={outfit:mission.looks[0],accessory:mission.accessories[0],mood:mission.moods[0]};
@@ -20,7 +26,7 @@ test('challenge star rewards cannot be farmed by repeats; improving a result awa
   assert.equal(validLook(DEFAULT_LOOK),true);assert.equal(validLook({...DEFAULT_LOOK,outfit:'missing'}),false);
   assert.throws(()=>evaluateLook(DEFAULT_LOOK,'missing'));
 });
-test('all six original looks, studio artwork, story guide and playable stereo BGM ship as local assets',()=>{
+test('all eighteen original looks, studio artwork, story guide and playable stereo BGM ship as local assets',()=>{
   for(const look of LOOKS){const bytes=fs.readFileSync(new URL('../dist/dress-up/assets/'+look.asset,import.meta.url));assert.equal(bytes.subarray(1,4).toString(),'PNG');}
   assert.ok(fs.existsSync(new URL('../dist/dress-up/guide.html',import.meta.url)));
   const bgm=fs.readFileSync(new URL('../dist/dress-up/assets/seoul-afterglow-v1.wav',import.meta.url));assert.equal(bgm.subarray(0,4).toString(),'RIFF');assert.equal(bgm.readUInt16LE(22),2);assert.equal(bgm.readUInt32LE(24),22050);assert.equal(bgm.readUInt32LE(40),22050*48*4);
