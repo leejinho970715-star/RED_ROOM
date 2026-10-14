@@ -50,3 +50,7 @@ Exact clothing specifications:
 - Overalls: Medium-indigo full-length denim dungaree overalls over a plain ivory short-sleeve T-shirt, white low-top canvas sneakers. Playful everyday casual fashion, realistic denim pocket stitching and brass buckles.
 - Bomber: Muted slate gray relaxed bomber jacket over an ivory crewneck top, olive green full-length cargo trousers and cream chunky sneakers. Original urban utility style with practical pockets, smooth realistic nylon and cotton materials.
 - Preppy: Soft forest-green cable-knit cardigan over a plain white collared shirt, navy below-knee pleated midi skirt, dark brown loafers. Cozy academic preppy fashion, realistic cable knit and crisp skirt pleats, modest natural adult proportions.
+
+## 파츠별 코디 이미지
+
+상의·하의·아우터·신발을 독립적으로 조합하는 전용 베이스와 투명 의상 PNG 9종을 추가했습니다. 각 부위 3선택(기본 티셔츠·플랫 및 아우터 없음 포함), 총 81조합입니다. 최종 생성 도구와 모든 프롬프트는 [PARTS-PROMPTS.md](./PARTS-PROMPTS.md)에 기록했습니다. 원본 PNG는 그대로 사용하며 layers.js에서 알파 경계와 부위별 등록 좌표로 합성합니다.

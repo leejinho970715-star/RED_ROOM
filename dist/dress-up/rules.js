@@ -1,3 +1,4 @@
+import {validParts,partScore} from './parts.js';
 export const LOOKS = [
   {id:'everyday',name:'에브리데이 데님',english:'EVERYDAY DENIM',category:'CASUAL',description:'라벤더 니트와 스트레이트 데님. 가장 나다운 일상.',tags:['캐주얼','편안함','일상'],asset:'everyday-v1.png'},
   {id:'office',name:'오피스 시크',english:'OFFICE CHIC',category:'TAILORED',description:'아이보리 재킷과 테일러드 팬츠. 단정한 자신감.',tags:['단정함','세련됨','출근'],asset:'office-v1.png'},
@@ -39,12 +40,12 @@ export const MISSIONS = [
 ];
 export const DEFAULT_LOOK = {outfit:'everyday',accessory:'none',mood:'daylight'};
 export function validLook(look) {
-  return !!look && LOOKS.some(item=>item.id===look.outfit) && ACCESSORIES.some(item=>item.id===look.accessory) && MOODS.some(item=>item.id===look.mood);
+  return !!look && LOOKS.some(item=>item.id===look.outfit) && ACCESSORIES.some(item=>item.id===look.accessory) && MOODS.some(item=>item.id===look.mood) && (look.mode===undefined||look.mode==='look'||look.mode==='parts'&&validParts(look.parts));
 }
 export function evaluateLook(look, missionId) {
   const mission=MISSIONS.find(item=>item.id===missionId);
   if (!validLook(look)||!mission) throw new Error('Invalid style or mission');
-  const outfit=mission.looks.includes(look.outfit)?70:30;
+  const outfit=look.mode==='parts'?partScore(look.parts,missionId):mission.looks.includes(look.outfit)?70:30;
   const accessory=mission.accessories.includes(look.accessory)?20:5;
   const mood=mission.moods.includes(look.mood)?10:0;
   const score=outfit+accessory+mood;
