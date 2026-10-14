@@ -96,3 +96,11 @@ Three.js, Galmuri, Silkscreen의 라이선스를 `dist/assets/`에 포함했습�
 메뉴는 GACHA ARCADE / MY NFT PARTS / LOTTERY & REWARDS / FAIRNESS CHECK / SURVIVOR GUIDE 영문으로 표시합니다. navigation.js 및 navigation.css에서 MENU/CLOSE 버튼, PC 메뉴 상태 저장, 모바일 오버레이 메뉴, 바깥 영역·Escape 닫기, 키보드 포커스 이동을 관리합니다.
 
 button-fit.css는 최소 16px 텍스트에 맞춰 주요 버튼의 높이·여백을 조정하고, 카드 자체 너비에 따라 장착/판매 버튼 배치를 전환합니다. 짧은 버튼 라벨은 한 줄로 유지하고, 작은 화면의 긴 모달 문구는 버튼 높이를 늘려 자연스럽게 표시합니다.
+
+## SEOUL STUDIO — 별도 옷입히기 게임
+
+별도 경로 /dress-up/에서 실행하며 기존 로또와 UI, 저장 데이터, 음악을 분리했습니다. 가상의 24세 한국 여성 서윤을 위해 생성한 실사풍 3D 일러스트 복장 6종(데님·오피스·블랙 드레스·애슬레저·카페 룩·모던 한복)을 선택하여 교체합니다. 메시 모델의 360도 회전이 아닌 이미지 기반 게임입니다.
+
+액세서리 4선택, 조명 무드 3종, 랜덤 코디, 5개 상황 미션, 100점 평가, 미션별 최대 3스타, 배지 3종, 9스타 골드 프레임, 최근 12개 룩북, PNG 저장, 확대/드래그가 포함됩니다. 이야기는 서윤의 작은 스타일 스튜디오에서 다섯 장면을 완성하는 내용이며 /dress-up/guide.html과 게임 내 스토리 버튼에서 확인합니다.
+
+BGM Seoul Afterglow는 오리지널 48초/80BPM 스테레오 라운지 음악입니다. scripts/generate-studio-bgm.mjs로 재생성할 수 있고, 첫 사용자 조작 후 재생하며 켜기/끄기·음량·백그라운드 일시정지를 지원합니다. 이미지 생성 도구와 최종 프롬프트는 dist/dress-up/assets/ASSETS.md에 보관했습니다. tests/dress-up.test.mjs에서 미션 점수, 반복 보상 방지, 필수 이미지와 BGM을 검증합니다.
