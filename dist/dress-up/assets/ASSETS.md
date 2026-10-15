@@ -54,3 +54,7 @@ Exact clothing specifications:
 ## 파츠별 코디 이미지
 
 상의·하의·아우터·신발을 독립적으로 조합하는 전용 베이스와 투명 의상 PNG 9종을 추가했습니다. 각 부위 3선택(기본 티셔츠·플랫 및 아우터 없음 포함), 총 81조합입니다. 최종 생성 도구와 모든 프롬프트는 [PARTS-PROMPTS.md](./PARTS-PROMPTS.md)에 기록했습니다. 원본 PNG는 그대로 사용하며 layers.js에서 알파 경계와 부위별 등록 좌표로 합성합니다.
+
+## 런웨이 표정 이미지
+
+S·A·B·C 결과 등급에 대응하는 서윤의 원본 표정 PNG 4종을 추가했습니다. 내장 image_gen을 사용했으며 [REACTION-PROMPTS.md](./REACTION-PROMPTS.md)에 최종 프롬프트와 저장 파일을 기록했습니다.

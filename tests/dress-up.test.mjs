@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {SLOTS,PARTS,DEFAULT_PARTS,validParts,customLook,cloneLook} from '../dist/dress-up/parts.js';
+import {REACTIONS} from '../dist/dress-up/reactions.js';
 import {LOOKS,LOOK_GROUPS,ACCESSORIES,MOODS,MISSIONS,DEFAULT_LOOK,validLook,evaluateLook,rewardForResult} from '../dist/dress-up/rules.js';
 test('eighteen distinct outfits are covered exactly once by wardrobe categories',()=>{
   assert.equal(LOOKS.length,18);assert.equal(new Set(LOOKS.map(l=>l.id)).size,18);
@@ -75,5 +76,20 @@ test('garment layers ship with valid registration bounds and four modern style m
   for(const mission of MISSIONS.filter(m=>m.id!=='heritage')){
     const parts=Object.fromEntries(SLOTS.map(s=>[s.id,PARTS.find(p=>p.slot===s.id&&p.missions.includes(mission.id)).id]));
     assert.equal(evaluateLook(customLook(parts,mission.accessories[0],mission.moods[0]),mission.id).score,100);
+  }
+});
+
+test('runway grades select four different shipped character expressions for actual score outcomes',()=>{
+  const samples=[
+    [{outfit:'everyday',accessory:'mini',mood:'sunset'},100,'S'],
+    [{outfit:'everyday',accessory:'none',mood:'daylight'},75,'A'],
+    [{outfit:'office',accessory:'mini',mood:'sunset'},60,'B'],
+    [{outfit:'office',accessory:'none',mood:'daylight'},35,'C']
+  ];
+  assert.equal(new Set(Object.values(REACTIONS).map(r=>r.asset)).size,4);
+  for(const [look,score,grade] of samples){
+    const result=evaluateLook(look,'cafe');assert.equal(result.score,score);assert.equal(result.grade,grade);
+    const bytes=fs.readFileSync(new URL('../dist/dress-up/assets/'+REACTIONS[result.grade].asset,import.meta.url));
+    assert.equal(bytes.subarray(1,4).toString(),'PNG');assert.ok(REACTIONS[grade].name&&REACTIONS[grade].message);
   }
 });

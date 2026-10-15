@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f6f4f1">
-  <title>SEOUL STUDIO — 3D Dress Up</title>
+  <title>Virtual Character Dress Up</title>
   <meta name="description" content="오리지널 24세 한국 여성 서윤의 실사풍 3D 일러스트 옷입히기 게임. 복장 18종, 상의·하의·아우터·신발 파츠 조합, 액세서리, 스타일 미션, 룩북과 오리지널 BGM.">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="./game.css">
 </head>
 <body>
-  <header class="site-header"><a class="brand" href="./" aria-label="Seoul Studio 홈"><span class="brand-icon">S<span>✦</span></span><span>SEOUL STUDIO<small>YOUR PERSONAL STYLE PLAYGROUND</small></span></a><div class="header-right"><div class="music-controls"><button id="music-toggle" aria-pressed="true">BGM ON</button><label><span>VOL</span><input id="music-volume" type="range" min="0" max="100" value="35" aria-label="배경 음악 음량"></label></div><span class="edition">VOL. 01 / DRESS UP</span><a href="../" class="room-link">RED ROOM ↗</a></div></header>
+  <header class="site-header"><a class="brand" href="./" aria-label="Virtual Character Dress Up 홈"><span class="brand-icon">V<span>✦</span></span><span>VIRTUAL CHARACTER<small>DRESS UP</small></span></a><div class="header-right"><div class="music-controls"><button id="music-toggle" aria-pressed="true">BGM ON</button><label><span>VOL</span><input id="music-volume" type="range" min="0" max="100" value="35" aria-label="배경 음악 음량"></label></div><span class="edition">VOL. 01 / DRESS UP</span><a href="../" class="room-link">RED ROOM ↗</a></div></header>
   <main>
     <div class="intro"><div><p class="eyebrow">A LITTLE CHANGE. A NEW YOU.</p><h1>오늘, 어떤 나로<br><em>입어볼까요?</em></h1><p class="intro-copy">옷을 고르고, 포인트를 더하고. 나만의 룩을 완성하는 작은 스튜디오.</p></div><div class="intro-note"><span>✦</span> EIGHTEEN LOOKS.<br>ENDLESS POSSIBILITIES.</div></div>
     <div class="studio-layout">
@@ -26,7 +26,7 @@
         <div class="mission-card"><div class="mission-top"><span>STYLE CHALLENGE</span><button id="next-mission" aria-label="다음 스타일 미션">다음 →</button></div><h3 id="mission-name"></h3><p id="mission-copy"></p><div id="mission-tags" class="mission-tags"></div><button id="runway" class="runway-button">런웨이 출전 <span>✦</span></button></div><div class="progress-strip"><span id="style-stars">✦ 0 STYLE STARS</span><span id="badge-count">0 / 18 룩 발견</span></div><div id="earned-badges" class="earned-badges" aria-label="도전 배지"></div><div class="save-actions"><button id="save-look" class="primary-button">내 룩 이미지 저장 <span>↓</span></button><button id="reset-look" class="reset-button">스타일 초기화</button></div>
       </section>
     </div>
-    <section class="lookbook"><div class="lookbook-heading"><div><p class="eyebrow">YOUR STYLE JOURNAL</p><h2>오늘의 룩북</h2></div><span id="album-count">0 / 12 LOOKS</span></div><div id="album-grid" class="album-grid"></div><p id="album-empty">런웨이에 출전한 룩이 여기에 기록됩니다. 마음에 드는 코디를 다시 불러올 수도 있어요.</p></section><button id="story-guide" class="story-button">스토리 & 플레이 가이드 ↗</button><footer><span>SEOUL STUDIO <i>✦</i> MADE FOR PLAY.</span><p>가상의 성인 캐릭터 · 실사풍 3D 일러스트 기반 · 스타일 스타는 게임 점수이며 선택과 룩북은 이 브라우저에 저장됩니다.</p></footer>
+    <section class="lookbook"><div class="lookbook-heading"><div><p class="eyebrow">YOUR STYLE JOURNAL</p><h2>오늘의 룩북</h2></div><span id="album-count">0 / 12 LOOKS</span></div><div id="album-grid" class="album-grid"></div><p id="album-empty">런웨이에 출전한 룩이 여기에 기록됩니다. 마음에 드는 코디를 다시 불러올 수도 있어요.</p></section><button id="story-guide" class="story-button">스토리 & 플레이 가이드 ↗</button><footer><span>VIRTUAL CHARACTER DRESS UP <i>✦</i> MADE FOR PLAY.</span><p>가상의 성인 캐릭터 · 실사풍 3D 일러스트 기반 · 스타일 스타는 게임 점수이며 선택과 룩북은 이 브라우저에 저장됩니다.</p></footer>
   </main>
   <dialog id="result-modal"><div class="result-top"><span>RUNWAY REVIEW</span><button id="close-result" aria-label="평가 창 닫기">×</button></div><div id="result-content"></div><button id="continue-styling" class="primary-button">다시 스타일링하기 →</button></dialog><nav class="mobile-studio-nav" aria-label="스튜디오 빠른 이동"><button id="show-model">캐릭터 ↑</button><button id="show-wardrobe">옷장 ✦</button><button id="show-mission">미션 →</button></nav><div id="status" class="toast" role="status" aria-live="polite"></div>
   <audio id="studio-bgm" src="./assets/seoul-afterglow-v1.wav" loop preload="metadata" hidden></audio><script type="module" src="./app.js"></script>

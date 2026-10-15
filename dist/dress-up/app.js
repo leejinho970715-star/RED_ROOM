@@ -2,6 +2,7 @@ import {LOOKS,LOOK_GROUPS,ACCESSORIES,MOODS,MISSIONS,DEFAULT_LOOK,validLook,eval
 import {createStudioAudio} from './audio.js';
 import {SLOTS,PARTS,DEFAULT_PARTS,equippedParts,customLook,cloneLook} from './parts.js';
 import {composeParts,partPreview} from './layers.js';
+import {REACTIONS} from './reactions.js';
 const $=selector=>document.querySelector(selector);
 const canvas=$('#model-canvas'),ctx=canvas.getContext('2d');
 const storageKey='seoul-studio-v1',imageCache=new Map();
@@ -129,9 +130,10 @@ function runway(){
   $('#result-modal .result-top>span').textContent='RUNWAY REVIEW';
   state.rewards[mission.id]=reward.total;state.stars+=reward.earned;if(result.success&&!state.cleared.includes(mission.id))state.cleared.push(mission.id);
   const look=cloneLook(state.look);state.album.unshift({look,mission:mission.id,score:result.score,grade:result.grade,time:Date.now()});state.album=state.album.slice(0,12);persist();render();draw();celebrate(result.score);audio.chime('runway');
-  const tips=[];if(result.outfit<70)tips.push('미션 태그와 가까운 복장을 골라보세요.');if(result.accessory<20)tips.push('액세서리의 분위기를 바꿔보세요.');if(result.mood<10)tips.push('장면에 맞는 스튜디오 무드를 골라보세요.');
+  const reaction=REACTIONS[result.grade];
+  const tips=[];if(result.outfit<70)tips.push(state.look.mode==='parts'?'미션 태그와 가까운 파츠를 골라보세요.':'미션 태그와 가까운 복장을 골라보세요.');if(result.accessory<20)tips.push('액세서리의 분위기를 바꿔보세요.');if(result.mood<10)tips.push('장면에 맞는 스튜디오 무드를 골라보세요.');
   const badge=[state.visited.length===LOOKS.length?'LOOK EXPLORER':'',state.cleared.length===5?'MISSION MASTER':''].filter(Boolean).map(b=>' / '+b).join('');
-  $('#result-content').innerHTML=`<div class="score-display"><strong>${result.grade}</strong><span>${result.score} / 100 POINTS</span><h2>${result.score>=90?'스튜디오의 새로운 뮤즈!':result.success?'오늘의 미션을 완성했어요!':'새로운 조합을 찾아볼까요?'}</h2><p>${tips.join(' ')||'복장, 액세서리, 무드가 미션과 잘 어울려요.'}</p></div><div class="score-lines"><div><span>복장과 상황의 어울림</span><b>${result.outfit} / 70</b></div><div><span>액세서리 포인트</span><b>${result.accessory} / 20</b></div><div><span>스튜디오 무드</span><b>${result.mood} / 10</b></div><div><span>이번에 받은 스타일 스타</span><b>+${reward.earned} ✦</b></div></div><p class="result-note">${reward.earned?'같은 미션은 최대 3개의 스타를 받을 수 있어요.':'이 미션의 스타는 이미 받았어요. 다른 미션에 도전해보세요.'}${state.stars>=9?' 골드 포토 프레임을 해금했어요!':''}${badge}</p>`;
+  $('#result-content').innerHTML=`<div class="runway-reaction reaction-${result.grade.toLowerCase()}"><img src="./assets/${reaction.asset}" alt="${reaction.name}"><p>“${reaction.message}”</p></div><div class="score-display"><strong>${result.grade}</strong><span>${result.score} / 100 POINTS</span><h2>${result.score>=90?'스튜디오의 새로운 뮤즈!':result.success?'오늘의 미션을 완성했어요!':'새로운 조합을 찾아볼까요?'}</h2><p>${tips.join(' ')||'복장, 액세서리, 무드가 미션과 잘 어울려요.'}</p></div><div class="score-lines"><div><span>복장과 상황의 어울림</span><b>${result.outfit} / 70</b></div><div><span>액세서리 포인트</span><b>${result.accessory} / 20</b></div><div><span>스튜디오 무드</span><b>${result.mood} / 10</b></div><div><span>이번에 받은 스타일 스타</span><b>+${reward.earned} ✦</b></div></div><p class="result-note">${reward.earned?'같은 미션은 최대 3개의 스타를 받을 수 있어요.':'이 미션의 스타는 이미 받았어요. 다른 미션에 도전해보세요.'}${state.stars>=9?' 골드 포토 프레임을 해금했어요!':''}${badge}</p>`;
   $('#result-modal').showModal();setTimeout(()=>runwayBusy=false,500);
 }
 function closeResult(){$('#result-modal').close();}

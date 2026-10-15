@@ -1,5 +1,9 @@
 import {equippedParts} from './parts.js';
 const figures=new Map(),bounds=new WeakMap();
+// These masks describe only the base tee and shorts. Keeping skin/hair/hands
+// outside the clothing layers prevents an old garment from peeking through.
+const baseTee=new Path2D('M340 289 Q380 256 456 249 Q510 302 580 249 Q650 255 690 288 L694 377 L672 391 L632 377 L626 466 L620 533 Q520 552 417 534 L409 466 L401 378 L355 391 L342 375 Z');
+const baseShorts=new Path2D('M417 533 Q518 542 621 532 L650 613 L660 779 L379 779 L374 650 Z');
 function alphaBounds(image){
   if(bounds.has(image))return bounds.get(image);
   const c=document.createElement('canvas');c.width=image.width;c.height=image.height;
@@ -18,8 +22,8 @@ export async function composeParts(parts,loadImage){
   const base=await loadImage('./assets/parts-base-v1.png');
   const c=document.createElement('canvas');c.width=1024;c.height=1536;const cx=c.getContext('2d');
   cx.drawImage(base,0,0,c.width,c.height);
-  // Replace the base shoes before compositing opaque footwear. Legs stay on the base.
-  if(parts.shoes!=='shoes-flats')cx.clearRect(398,1380,226,156);
+  cx.save();cx.globalCompositeOperation='destination-out';
+  cx.fill(baseShorts);if(parts.top!=='top-tee')cx.fill(baseTee);cx.restore();
   for(const slot of ['shoes','bottom','top','outer']){
     const index=selected.findIndex(p=>p.slot===slot),part=selected[index],image=images[index];
     if(!image)continue;
@@ -35,6 +39,9 @@ export async function composeParts(parts,loadImage){
       cx.drawImage(image,sx,sy+t*sh,sw,sh/height,dx,y1+row,dw,1);
     }
   }
+  // Hands must sit in front of sleeves; the cuff stops at the wrist rather than
+  // covering fingers when outerwear and a long-sleeve top are worn together.
+  cx.save();cx.beginPath();cx.rect(282,705,82,144);cx.rect(674,705,82,144);cx.clip();cx.drawImage(base,0,0,1024,1536);cx.restore();
   // Keep a bounded cache: 81 combinations need not occupy decoded memory forever.
   if(figures.size>=16)figures.delete(figures.keys().next().value);
   figures.set(key,c);return c;
