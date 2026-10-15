@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {SLOTS,PARTS,DEFAULT_PARTS,validParts,customLook,cloneLook} from '../dist/dress-up/parts.js';
 import {REACTIONS} from '../dist/dress-up/reactions.js';
+import {BODY_ANCHORS,garmentRig,uniformPlacement,footwearPlacement} from '../dist/dress-up/fitting.js';
 import {LOOKS,LOOK_GROUPS,ACCESSORIES,MOODS,MISSIONS,DEFAULT_LOOK,validLook,evaluateLook,rewardForResult} from '../dist/dress-up/rules.js';
 test('eighteen distinct outfits are covered exactly once by wardrobe categories',()=>{
   assert.equal(LOOKS.length,18);assert.equal(new Set(LOOKS.map(l=>l.id)).size,18);
@@ -91,5 +92,32 @@ test('runway grades select four different shipped character expressions for actu
     const result=evaluateLook(look,'cafe');assert.equal(result.score,score);assert.equal(result.grade,grade);
     const bytes=fs.readFileSync(new URL('../dist/dress-up/assets/'+REACTIONS[result.grade].asset,import.meta.url));
     assert.equal(bytes.subarray(1,4).toString(),'PNG');assert.ok(REACTIONS[grade].name&&REACTIONS[grade].message);
+  }
+});
+
+test('fitted bodices end at the waist while sleeves still reach the wrists; registration cannot fold over',()=>{
+  for(const id of ['top-knit','top-shirt']){
+    const rig=garmentRig(id);
+    assert.equal(rig.target[3][1][1],BODY_ANCHORS.waistY);
+    assert.equal(rig.target.at(-1)[0][1],BODY_ANCHORS.wristY);
+    assert.ok(rig.target[1].at(-1)[0]-rig.target[1][0][0]<=360);
+  }
+  for(const part of PARTS.filter(p=>garmentRig(p.id))){
+    const rig=garmentRig(part.id);
+    for(const grid of [rig.source,rig.target])for(let r=0;r<grid.length;r++)for(let c=0;c<grid[r].length;c++){
+      const [x,y]=grid[r][c];assert.ok(x>=0&&x<=1024&&y>=0&&y<=1536);
+      if(c)assert.ok(x>grid[r][c-1][0]);
+      if(r)assert.ok(y>grid[r-1][c][1]);
+    }
+  }
+});
+
+test('trousers and individual shoes retain their artwork aspect ratio and align to each foot',()=>{
+  const source=[280,120,445,1340],placed=uniformPlacement(source,[365,534,672,1410]);
+  assert.ok(Math.abs(placed.target[2]/placed.target[3]-445/1340)<1e-9);
+  for(const [foot,center] of [['left',464],['right',558]]){
+    const shoe=footwearPlacement([100,500,350,650],[398,1370,624,1500],foot);
+    assert.ok(Math.abs(shoe.target[2]/shoe.target[3]-350/650)<1e-9);
+    assert.equal(shoe.target[0]+shoe.target[2]/2,center);
   }
 });
